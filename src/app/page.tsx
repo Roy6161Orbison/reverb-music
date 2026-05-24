@@ -5,14 +5,14 @@ import { ARTICLES_QUERY } from '@/lib/queries'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
-const MOCK_ARTICLES = [
+const MOCK_ARTICLES: Article[] = [
   {
     _id: 'mock-1',
     slug: { current: 'midnight-dialogues' },
     title: 'Midnight Dialogues',
-    type: 'review',
+    type: 'review' as const,
     publishedAt: '2024-12-15',
-    excerpt: '内省と脆弱さの素晴らしい探求。プロダクションは精緻で、各ヴォーカルのニュアンスを輝かせる。',
+    excerpt: '内省と脆弱さの素晴らしい探求。',
     score: { overall: 7.8 },
     artist: 'Sound Weaver',
   },
