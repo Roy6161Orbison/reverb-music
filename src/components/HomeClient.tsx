@@ -13,6 +13,7 @@ type Article = {
   excerpt: string
   score?: { overall: number }
   artist?: string
+  featured?: boolean
   image?: {
     asset: {
       _ref: string
@@ -24,10 +25,10 @@ type Article = {
 export default function HomeClient({ articles }: { articles: Article[] }) {
   const [activeTab, setActiveTab] = useState<string>('all')
 
-  const mainArticle = articles[0]
-  const filteredArticles = activeTab === 'all' 
-    ? articles.slice(1)
-    : articles.slice(1).filter(a => a.type === activeTab)
+  const mainArticle = articles.find(a => a.featured) || articles[0]
+  const filteredArticles = activeTab === 'all'
+  ? articles.filter(a => a._id !== mainArticle._id)
+  : articles.filter(a => a.type === activeTab && a._id !== mainArticle._id) 
 
   const tabs = [
     { id: 'all', label: 'All' },

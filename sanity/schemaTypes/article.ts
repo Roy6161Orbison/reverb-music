@@ -21,6 +21,12 @@ export const article = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'featured',
+      title: 'Featured (メインに表示)',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
       name: 'excerpt',
       title: 'Excerpt',
       type: 'text',

@@ -1,9 +1,24 @@
 import { sanityClient } from '@/lib/sanity'
 import { ARTICLE_BY_SLUG_QUERY } from '@/lib/queries'
-import { Article } from '@/types'
 import Link from 'next/link'
 import { urlFor } from '@/lib/sanity'
-import Image from 'next/image'
+
+type Article = {
+  _id: string
+  title: string
+  slug: { current: string }
+  type: string
+  excerpt: string
+  body: any[]
+  publishedAt: string
+  artist?: string
+  score?: { overall: number }
+  image?: {
+    asset: {
+      _ref: string
+    }
+  }
+}
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   let article: Article | null = null
@@ -19,94 +34,87 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     return <div className="text-center py-12">記事が見つかりません</div>
   }
 
-  const title = typeof article.title === 'string' ? article.title : (article.title?.ja || article.title?.en || 'Untitled')
-  const imageUrl = article.coverImage?.asset ? urlFor(article.coverImage.asset).width(600).url() : null
-
   return (
-    <main className="max-w-2xl mx-auto px-6 py-12">
-      <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block">
-        ← Back to reviews
-      </Link>
-
-      {imageUrl && (
-        <div className="w-full h-96 bg-gray-300 rounded-lg mb-8 overflow-hidden">
-          <Image
-            src={imageUrl}
-            alt={title}
-            width={600}
-            height={400}
-            className="w-full h-full object-cover"
-          />
+    <main className="min-h-screen bg-white">
+      {/* ヘッダー */}
+      <header className="border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+          <Link href="/">
+            <h1 className="font-serif text-2xl tracking-tight">Reverb</h1>
+          </Link>
+          <nav className="hidden md:flex gap-6 text-xs tracking-widest uppercase">
+            <Link href="/" className="hover:text-orange-700">Home</Link>
+            <Link href="#" className="hover:text-orange-700">About</Link>
+            <Link href="#" className="hover:text-orange-700">Archive</Link>
+          </nav>
         </div>
-      )}
+      </header>
 
-      {article.score && (
-        <div className="flex items-baseline gap-4 mb-8">
-          <span className="font-serif text-6xl text-orange-700">{article.score.overall}</span>
-          <p className="text-xs uppercase tracking-widest text-gray-600">Overall score</p>
-        </div>
-      )}
+      <article className="max-w-3xl mx-auto px-6 py-12">
+        <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block">
+          ← ホームに戻る
+        </Link>
 
-      <h1 className="font-serif text-4xl mb-2 leading-tight text-black">{title}</h1>
+        {/* 記事のメタ情報 */}
+        <p className="text-xs tracking-widest uppercase text-gray-500 mb-4">
+          {article.type === 'review' ? 'Review' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
+          <span className="mx-2">•</span>
+          {new Date(article.publishedAt).toLocaleDateString('ja-JP')}
+        </p>
 
-      <p className="text-sm text-gray-600 mb-8">
-        {typeof article.author?.name === 'string' 
-          ? article.author.name 
-          : (article.author?.name?.ja || 'Unknown')} • {new Date(article.publishedAt).toLocaleDateString('ja-JP')}
-      </p>
+        {/* タイトル */}
+        <h1 className="font-serif text-5xl mb-4 leading-tight">{article.title}</h1>
 
-      <div className="prose prose-sm max-w-none mb-12 text-gray-900">
-        {article.body && article.body.length > 0 ? (
-          article.body.map((block: any, idx: number) => {
-            if (block._type === 'block') {
-              return (
-                <p key={idx} className="text-base leading-7 text-gray-900 mb-4">
-                  {block.children?.map((child: any) => child.text).join('')}
-                </p>
-              )
-            }
-            return null
-          })
-        ) : (
-          <p className="text-gray-600">[記事本文がまだありません]</p>
-        )}
-      </div>
+        {/* アーティスト */}
+        {article.artist && <p className="text-xl text-gray-600 mb-6">{article.artist}</p>}
 
-      {article.tags && article.tags.length > 0 && (
-        <div className="mb-8 pt-8 border-t border-gray-300">
-          <div className="flex gap-2 flex-wrap">
-            {article.tags.map((tag) => {
-              const tagName = typeof tag.name === 'string' ? tag.name : (tag.name?.ja || tag.name?.en || 'Tag')
-              return (
-                <span key={tag._id} className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-md">
-                  {tagName}
-                </span>
-              )
-            })}
+        {/* スコア */}
+        {article.score && (
+          <div className="flex items-baseline gap-4 mb-8">
+            <span className="font-serif text-6xl text-orange-700">{article.score.overall}</span>
+            <p className="text-xs uppercase tracking-widest text-gray-600">Overall score</p>
           </div>
-        </div>
-      )}
+        )}
 
-      {article.relatedArticles && article.relatedArticles.length > 0 && (
-        <div className="pt-8 border-t border-gray-300">
-          <h3 className="font-serif text-base font-medium mb-4">関連記事</h3>
-          <ul className="space-y-2 text-sm">
-            {article.relatedArticles.map((related) => {
-              const relatedTitle = typeof related.title === 'string' ? related.title : (related.title?.ja || related.title?.en || 'Untitled')
-              return (
-                <li key={related._id}>
-                  <Link
-                    href={`/article/${related.slug.current}`}
-                    className="text-gray-900 hover:text-orange-700 underline"
-                  >
-                    {relatedTitle}
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
+        {/* カバー画像 */}
+        {article.image && (
+          <div className="mb-8 overflow-hidden rounded-lg">
+            <img
+              src={urlFor(article.image).width(800).height(500).url()}
+              alt={article.title}
+              className="w-full h-96 object-cover"
+            />
+          </div>
+        )}
+
+        {/* 本文 */}
+        <div className="prose prose-lg max-w-none mb-12 text-gray-900">
+          {article.body && article.body.length > 0 ? (
+            article.body.map((block: any, idx: number) => {
+              if (block._type === 'block') {
+                return (
+                  <p key={idx} className="text-base leading-8 text-gray-800 mb-6">
+                    {block.children?.map((child: any) => child.text).join('')}
+                  </p>
+                )
+              }
+              return null
+            })
+          ) : (
+            <p className="text-gray-600">[記事本文がまだありません]</p>
+          )}
         </div>
-      )}
+      </article>
+
+      {/* フッター */}
+      <footer className="border-t border-gray-200 py-8 mt-12">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <p className="font-serif text-base mb-1">Reverb / 残響</p>
+          <p className="text-xs text-gray-500 tracking-widest uppercase">
+            音楽を文化として読む
+          </p>
+        </div>
+      </footer>
     </main>
   )
 }
