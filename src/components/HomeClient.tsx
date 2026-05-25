@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { urlFor } from '@/lib/sanity'
 
 type Article = {
   _id: string
@@ -12,6 +13,12 @@ type Article = {
   excerpt: string
   score?: { overall: number }
   artist?: string
+  image?: {
+    asset: {
+      _ref: string
+    }
+    hotspot?: any
+  }
 }
 
 export default function HomeClient({ articles }: { articles: Article[] }) {
@@ -49,6 +56,15 @@ export default function HomeClient({ articles }: { articles: Article[] }) {
           <section className="py-12 border-b border-gray-200">
             <Link href={`/article/${mainArticle.slug.current}`}>
               <article className="cursor-pointer group">
+                {mainArticle.image && (
+                  <div className="mb-6 overflow-hidden rounded-lg">
+                    <img
+                      src={urlFor(mainArticle.image).width(800).height(500).url()}
+                      alt={mainArticle.title}
+                      className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                )}
                 <p className="text-xs tracking-widest uppercase text-gray-500 mb-3">
                   {mainArticle.type === 'review' ? 'Review' : mainArticle.type === 'interview' ? 'Interview' : mainArticle.type === 'feature' ? 'Feature' : mainArticle.type}
                   <span className="mx-2">•</span>
@@ -110,6 +126,15 @@ function ArticleCard({ article }: { article: Article }) {
   return (
     <Link href={`/article/${article.slug.current}`}>
       <article className="cursor-pointer group">
+        {article.image && (
+          <div className="mb-3 overflow-hidden rounded-lg">
+            <img
+              src={urlFor(article.image).width(400).height(250).url()}
+              alt={article.title}
+              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        )}
         <p className="text-xs tracking-widest uppercase text-gray-500 mb-2">
           {article.type === 'review' ? 'Review' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
         </p>

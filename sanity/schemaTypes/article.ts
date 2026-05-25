@@ -26,6 +26,14 @@ export const article = defineType({
       type: 'text',
     }),
     defineField({
+      name: 'image',
+      title: 'Cover Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
       name: 'body',
       title: 'Body',
       type: 'array',

@@ -7,7 +7,8 @@ export const ARTICLES_QUERY = `
     excerpt,
     publishedAt,
     artist,
-    score
+    score,
+    image
   }
 `
 
@@ -21,6 +22,7 @@ export const ARTICLE_BY_SLUG_QUERY = `
     body,
     publishedAt,
     artist,
-    score
+    score,
+    image
   }
 `
