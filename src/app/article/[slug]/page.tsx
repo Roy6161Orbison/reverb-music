@@ -13,6 +13,7 @@ type Article = {
   publishedAt: string
   artist?: string
   score?: { overall: number }
+  featured?: boolean
   image?: {
     asset: {
       _ref: string
@@ -20,11 +21,18 @@ type Article = {
   }
 }
 
-export default async function ArticlePage({ params }: { params: { slug: string } }) {
+export default async function ArticlePage({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}) {
+  // params を await で取得
+  const { slug } = await params
+  
   let article: Article | null = null
 
   try {
-    article = await sanityClient.fetch(ARTICLE_BY_SLUG_QUERY, { slug: params.slug })
+    article = await sanityClient.fetch(ARTICLE_BY_SLUG_QUERY, { slug })
   } catch (error) {
     console.error('Failed to fetch article:', error)
     return <div className="text-center py-12">記事が見つかりません</div>

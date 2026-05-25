@@ -26,9 +26,11 @@ export default function HomeClient({ articles }: { articles: Article[] }) {
   const [activeTab, setActiveTab] = useState<string>('all')
 
   const mainArticle = articles.find(a => a.featured) || articles[0]
+  
+  // メイン記事以外の記事でフィルタリング
   const filteredArticles = activeTab === 'all'
-  ? articles.filter(a => a._id !== mainArticle._id)
-  : articles.filter(a => a.type === activeTab && a._id !== mainArticle._id) 
+    ? articles.filter(a => a._id !== mainArticle._id)
+    : articles.filter(a => a.type === activeTab && a._id !== mainArticle._id)
 
   const tabs = [
     { id: 'all', label: 'All' },
