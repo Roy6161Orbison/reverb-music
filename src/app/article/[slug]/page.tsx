@@ -2,6 +2,8 @@ import { sanityClient } from '@/lib/sanity'
 import { ARTICLE_BY_SLUG_QUERY } from '@/lib/queries'
 import Link from 'next/link'
 import { urlFor } from '@/lib/sanity'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 type Article = {
   _id: string
@@ -44,19 +46,7 @@ export default async function ArticlePage({
 
   return (
     <main className="min-h-screen bg-white">
-      {/* ヘッダー */}
-      <header className="border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
-          <Link href="/">
-            <h1 className="font-serif text-2xl tracking-tight">Reverb</h1>
-          </Link>
-          <nav className="hidden md:flex gap-6 text-xs tracking-widest uppercase">
-            <Link href="/" className="hover:text-orange-700">Home</Link>
-            <Link href="#" className="hover:text-orange-700">About</Link>
-            <Link href="#" className="hover:text-orange-700">Archive</Link>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <article className="max-w-3xl mx-auto px-6 py-12">
         <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block">
@@ -114,15 +104,7 @@ export default async function ArticlePage({
         </div>
       </article>
 
-      {/* フッター */}
-      <footer className="border-t border-gray-200 py-8 mt-12">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <p className="font-serif text-base mb-1">Reverb / 残響</p>
-          <p className="text-xs text-gray-500 tracking-widest uppercase">
-            音楽を文化として読む
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   )
 }
