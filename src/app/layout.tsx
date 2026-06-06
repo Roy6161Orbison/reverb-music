@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Reverb / 残響',
+  title: "Somethin' Else",
   description: '音楽を文化として読む、少し意地悪で優しいガイド',
 }
 
