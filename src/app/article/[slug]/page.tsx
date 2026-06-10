@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { urlFor } from '@/lib/sanity'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import ReadingProgress from '@/components/ReadingProgress'
+import ScoreCounter from '@/components/ScoreCounter'
 import { SITE_NAME, SITE_URL } from '@/lib/site'
 
 // 埋め込みURLを iframe 用の埋め込みURLに変換（YouTube / Spotify / Apple Music 対応）
@@ -134,37 +136,42 @@ export default async function ArticlePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <ReadingProgress />
       <Header />
 
       <article className="max-w-3xl mx-auto px-6 py-12">
-        <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block">
+        <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block anim-fade-in">
           ← ホームに戻る
         </Link>
 
         {/* 記事のメタ情報 */}
-        <p className="text-xs tracking-widest uppercase text-gray-500 mb-4">
+        <p className="text-xs tracking-widest uppercase text-gray-500 mb-4 anim-fade-in-up">
           {article.type === 'review' ? 'Review' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
           <span className="mx-2">•</span>
           {new Date(article.publishedAt).toLocaleDateString('ja-JP')}
         </p>
 
         {/* タイトル */}
-        <h1 className="font-serif text-5xl mb-4 leading-tight">{article.title}</h1>
+        <h1 className="font-serif text-5xl mb-4 leading-tight anim-fade-in-up anim-delay-1">{article.title}</h1>
 
         {/* アーティスト */}
-        {article.artist && <p className="text-xl text-gray-600 mb-6">{article.artist}</p>}
+        {article.artist && (
+          <p className="text-xl text-gray-600 mb-6 anim-fade-in-up anim-delay-2">{article.artist}</p>
+        )}
 
         {/* スコア */}
         {article.score && (
-          <div className="flex items-baseline gap-4 mb-8">
-            <span className="font-serif text-6xl text-orange-700">{article.score.overall}</span>
+          <div className="flex items-baseline gap-4 mb-8 anim-fade-in-up anim-delay-2">
+            <span className="font-serif text-6xl text-orange-700">
+              <ScoreCounter value={article.score.overall} />
+            </span>
             <p className="text-xs uppercase tracking-widest text-gray-600">Overall score</p>
           </div>
         )}
 
         {/* カバー画像 */}
         {article.image && (
-          <div className="mb-8 overflow-hidden rounded-lg">
+          <div className="mb-8 overflow-hidden rounded-lg anim-fade-in anim-delay-3">
             <img
               src={urlFor(article.image).width(800).height(500).url()}
               alt={article.title}
