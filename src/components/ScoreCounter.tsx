@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export default function ScoreCounter({ value }: { value: number }) {
   const [display, setDisplay] = useState(0)
-  const rafRef = useRef<number>()
+  const rafRef = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     const duration = 1100
