@@ -8,6 +8,8 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ReadingProgress from '@/components/ReadingProgress'
 import ScoreCounter from '@/components/ScoreCounter'
+import Reveal from '@/components/Reveal'
+import ParallaxImage from '@/components/ParallaxImage'
 import { SITE_NAME, SITE_URL } from '@/lib/site'
 
 // 埋め込みURLを iframe 用の埋め込みURLに変換（YouTube / Spotify / Apple Music 対応）
@@ -140,7 +142,7 @@ export default async function ArticlePage({
       <Header />
 
       <article className="max-w-3xl mx-auto px-6 py-12">
-        <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block anim-fade-in">
+        <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block anim-fade-in transition-colors">
           ← ホームに戻る
         </Link>
 
@@ -152,7 +154,9 @@ export default async function ArticlePage({
         </p>
 
         {/* タイトル */}
-        <h1 className="font-serif text-5xl mb-4 leading-tight anim-fade-in-up anim-delay-1">{article.title}</h1>
+        <Reveal as="h1" className="text-reveal font-serif text-5xl mb-4 leading-tight" delay={80}>
+          <span>{article.title}</span>
+        </Reveal>
 
         {/* アーティスト */}
         {article.artist && (
@@ -169,15 +173,15 @@ export default async function ArticlePage({
           </div>
         )}
 
-        {/* カバー画像 */}
+        {/* カバー画像（パララックス） */}
         {article.image && (
-          <div className="mb-8 overflow-hidden rounded-lg anim-fade-in anim-delay-3">
-            <img
-              src={urlFor(article.image).width(800).height(500).url()}
+          <Reveal className="img-reveal mb-8 overflow-hidden rounded-lg" delay={120}>
+            <ParallaxImage
+              src={urlFor(article.image).width(1000).height(620).url()}
               alt={article.title}
-              className="w-full h-96 object-cover"
+              className="h-96 rounded-lg"
             />
-          </div>
+          </Reveal>
         )}
 
         {/* 本文 */}
@@ -186,14 +190,14 @@ export default async function ArticlePage({
             article.body.map((block: any, idx: number) => {
               if (block._type === 'block') {
                 return (
-                  <p key={idx} className="text-base leading-8 text-gray-800 mb-6">
+                  <Reveal key={idx} as="p" className="reveal text-base leading-8 text-gray-800 mb-6">
                     {block.children?.map((child: any) => child.text).join('')}
-                  </p>
+                  </Reveal>
                 )
               }
               if (block._type === 'image' && block.asset) {
                 return (
-                  <figure key={idx} className="my-8">
+                  <Reveal key={idx} as="figure" className="reveal my-8">
                     <img
                       src={urlFor(block).width(1000).url()}
                       alt={block.alt || ''}
@@ -204,13 +208,13 @@ export default async function ArticlePage({
                         {block.caption}
                       </figcaption>
                     )}
-                  </figure>
+                  </Reveal>
                 )
               }
               if (block._type === 'embed' && block.url) {
                 const embed = toEmbedUrl(block.url)
                 return (
-                  <figure key={idx} className="my-8">
+                  <Reveal key={idx} as="figure" className="reveal my-8">
                     {embed ? (
                       <div className="overflow-hidden rounded-lg" style={{ aspectRatio: '16 / 9' }}>
                         <iframe
@@ -230,7 +234,7 @@ export default async function ArticlePage({
                         {block.caption}
                       </figcaption>
                     )}
-                  </figure>
+                  </Reveal>
                 )
               }
               return null
