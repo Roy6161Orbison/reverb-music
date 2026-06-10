@@ -10,7 +10,7 @@ type Article = {
   _id: string
   slug: { current: string }
   title: string
-  type: 'review' | 'feature' | 'interview' | 'news'
+  type: 'music' | 'film' | 'feature' | 'interview' | 'news' | 'review'
   publishedAt: string
   excerpt: string
   score?: { overall: number }
@@ -38,7 +38,8 @@ export default function HomeClient({ articles }: { articles: Article[] }) {
 
   const tabs = [
     { id: 'all', label: 'All' },
-    { id: 'review', label: 'Reviews' },
+    { id: 'music', label: 'Music' },
+    { id: 'film', label: 'Films' },
     { id: 'feature', label: 'Features' },
     { id: 'interview', label: 'Interviews' },
   ]
@@ -72,7 +73,7 @@ export default function HomeClient({ articles }: { articles: Article[] }) {
                   </div>
                 )}
                 <p className="text-xs tracking-widest uppercase text-gray-500 mb-3">
-                  {mainArticle.type === 'review' ? 'Review' : mainArticle.type === 'interview' ? 'Interview' : mainArticle.type === 'feature' ? 'Feature' : mainArticle.type}
+                  {mainArticle.type === 'music' ? 'Music' : mainArticle.type === 'film' ? 'Film' : mainArticle.type === 'interview' ? 'Interview' : mainArticle.type === 'feature' ? 'Feature' : mainArticle.type}
                   <span className="mx-2">•</span>
                   {new Date(mainArticle.publishedAt).toLocaleDateString('ja-JP')}
                 </p>
@@ -90,7 +91,7 @@ export default function HomeClient({ articles }: { articles: Article[] }) {
         )}
 
         <div className="py-8 border-b border-gray-200 anim-fade-in anim-delay-2">
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-x-6 gap-y-3">
             {tabs.map(tab => (
               <button
                 key={tab.id}
@@ -146,7 +147,7 @@ function ArticleCard({ article }: { article: Article }) {
           </div>
         )}
         <p className="text-xs tracking-widest uppercase text-gray-500 mb-2">
-          {article.type === 'review' ? 'Review' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
+          {article.type === 'music' ? 'Music' : article.type === 'film' ? 'Film' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
         </p>
         <h3 className="font-serif text-xl mb-2 leading-tight group-hover:text-orange-700 transition-colors duration-300">
           {article.title}

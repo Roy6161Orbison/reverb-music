@@ -146,7 +146,7 @@ export default async function ArticlePage({
 
         {/* 記事のメタ情報 */}
         <p className="text-xs tracking-widest uppercase text-gray-500 mb-4 anim-fade-in-up">
-          {article.type === 'review' ? 'Review' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
+          {article.type === 'music' ? 'Music' : article.type === 'film' ? 'Film' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
           <span className="mx-2">•</span>
           {new Date(article.publishedAt).toLocaleDateString('ja-JP')}
         </p>
