@@ -45,6 +45,14 @@ export default function Reveal({
       return () => cancelAnimationFrame(id)
     }
 
+    // Above-the-fold elements: reveal immediately on mount so content is
+    // never stuck hidden if the observer misses the initial intersection.
+    const rect = el.getBoundingClientRect()
+    if (rect.top < window.innerHeight && rect.bottom > 0 && once) {
+      const id = requestAnimationFrame(() => setVisible(true))
+      return () => cancelAnimationFrame(id)
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
