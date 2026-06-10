@@ -100,7 +100,8 @@ export const article = defineType({
       type: 'string',
       options: {
         list: [
-          {title: 'Review', value: 'review'},
+          {title: 'Music', value: 'music'},
+          {title: 'Films', value: 'film'},
           {title: 'Feature', value: 'feature'},
           {title: 'Interview', value: 'interview'},
           {title: 'News', value: 'news'},
