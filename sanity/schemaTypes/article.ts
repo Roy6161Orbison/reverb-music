@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export const article = defineType({
   name: 'article',
@@ -43,7 +43,50 @@ export const article = defineType({
       name: 'body',
       title: 'Body',
       type: 'array',
-      of: [{type: 'block'}],
+      of: [
+        defineArrayMember({type: 'block'}),
+        defineArrayMember({
+          type: 'image',
+          title: '画像',
+          options: {hotspot: true},
+          fields: [
+            defineField({
+              name: 'alt',
+              title: '代替テキスト (alt)',
+              type: 'string',
+            }),
+            defineField({
+              name: 'caption',
+              title: 'キャプション',
+              type: 'string',
+            }),
+          ],
+        }),
+        defineArrayMember({
+          type: 'object',
+          name: 'embed',
+          title: '埋め込み (YouTube / Spotify など)',
+          fields: [
+            defineField({
+              name: 'url',
+              title: 'URL',
+              type: 'url',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'caption',
+              title: 'キャプション',
+              type: 'string',
+            }),
+          ],
+          preview: {
+            select: {title: 'url', subtitle: 'caption'},
+            prepare({title, subtitle}) {
+              return {title: subtitle || '埋め込み', subtitle: title}
+            },
+          },
+        }),
+      ],
     }),
     defineField({
       name: 'publishedAt',

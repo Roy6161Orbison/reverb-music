@@ -5,6 +5,31 @@ import { urlFor } from '@/lib/sanity'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
+// 埋め込みURLを iframe 用の埋め込みURLに変換（YouTube / Spotify / Apple Music 対応）
+function toEmbedUrl(url: string): string | null {
+  try {
+    const u = new URL(url)
+    const host = u.hostname.replace(/^www\./, '')
+
+    if (host === 'youtu.be') {
+      return `https://www.youtube.com/embed/${u.pathname.slice(1)}`
+    }
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      const id = u.searchParams.get('v')
+      return id ? `https://www.youtube.com/embed/${id}` : null
+    }
+    if (host === 'open.spotify.com') {
+      return `https://open.spotify.com/embed${u.pathname}`
+    }
+    if (host === 'music.apple.com') {
+      return `https://embed.music.apple.com${u.pathname}${u.search}`
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
 type Article = {
   _id: string
   title: string
@@ -94,6 +119,48 @@ export default async function ArticlePage({
                   <p key={idx} className="text-base leading-8 text-gray-800 mb-6">
                     {block.children?.map((child: any) => child.text).join('')}
                   </p>
+                )
+              }
+              if (block._type === 'image' && block.asset) {
+                return (
+                  <figure key={idx} className="my-8">
+                    <img
+                      src={urlFor(block).width(1000).url()}
+                      alt={block.alt || ''}
+                      className="w-full rounded-lg"
+                    />
+                    {block.caption && (
+                      <figcaption className="mt-2 text-center text-sm text-gray-500">
+                        {block.caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                )
+              }
+              if (block._type === 'embed' && block.url) {
+                const embed = toEmbedUrl(block.url)
+                return (
+                  <figure key={idx} className="my-8">
+                    {embed ? (
+                      <div className="overflow-hidden rounded-lg" style={{ aspectRatio: '16 / 9' }}>
+                        <iframe
+                          src={embed}
+                          className="h-full w-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    ) : (
+                      <a href={block.url} target="_blank" rel="noopener noreferrer" className="text-orange-700 underline">
+                        {block.url}
+                      </a>
+                    )}
+                    {block.caption && (
+                      <figcaption className="mt-2 text-center text-sm text-gray-500">
+                        {block.caption}
+                      </figcaption>
+                    )}
+                  </figure>
                 )
               }
               return null
