@@ -6,6 +6,10 @@ import Link from 'next/link'
 import { urlFor } from '@/lib/sanity'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import ReadingProgress from '@/components/ReadingProgress'
+import ScoreCounter from '@/components/ScoreCounter'
+import Reveal from '@/components/Reveal'
+import ParallaxImage from '@/components/ParallaxImage'
 import { SITE_NAME, SITE_URL } from '@/lib/site'
 
 // 埋め込みURLを iframe 用の埋め込みURLに変換（YouTube / Spotify / Apple Music 対応）
@@ -134,43 +138,50 @@ export default async function ArticlePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <ReadingProgress />
       <Header />
 
       <article className="max-w-3xl mx-auto px-6 py-12">
-        <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block">
+        <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block anim-fade-in transition-colors">
           ← ホームに戻る
         </Link>
 
         {/* 記事のメタ情報 */}
-        <p className="text-xs tracking-widest uppercase text-gray-500 mb-4">
-          {article.type === 'review' ? 'Review' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
+        <p className="text-xs tracking-widest uppercase text-gray-500 mb-4 anim-fade-in-up">
+          {article.type === 'music' ? 'Music' : article.type === 'film' ? 'Film' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
           <span className="mx-2">•</span>
           {new Date(article.publishedAt).toLocaleDateString('ja-JP')}
         </p>
 
         {/* タイトル */}
-        <h1 className="font-serif text-5xl mb-4 leading-tight">{article.title}</h1>
+        <Reveal as="h1" className="text-reveal font-serif text-5xl mb-4 leading-tight" delay={80}>
+          <span>{article.title}</span>
+        </Reveal>
 
         {/* アーティスト */}
-        {article.artist && <p className="text-xl text-gray-600 mb-6">{article.artist}</p>}
+        {article.artist && (
+          <p className="text-xl text-gray-600 mb-6 anim-fade-in-up anim-delay-2">{article.artist}</p>
+        )}
 
         {/* スコア */}
         {article.score && (
-          <div className="flex items-baseline gap-4 mb-8">
-            <span className="font-serif text-6xl text-orange-700">{article.score.overall}</span>
+          <div className="flex items-baseline gap-4 mb-8 anim-fade-in-up anim-delay-2">
+            <span className="font-serif text-6xl text-orange-700">
+              <ScoreCounter value={article.score.overall} />
+            </span>
             <p className="text-xs uppercase tracking-widest text-gray-600">Overall score</p>
           </div>
         )}
 
-        {/* カバー画像 */}
+        {/* カバー画像（パララックス） */}
         {article.image && (
-          <div className="mb-8 overflow-hidden rounded-lg">
-            <img
-              src={urlFor(article.image).width(800).height(500).url()}
+          <Reveal className="img-reveal mb-8 overflow-hidden rounded-lg" delay={120}>
+            <ParallaxImage
+              src={urlFor(article.image).width(1000).height(620).url()}
               alt={article.title}
-              className="w-full h-96 object-cover"
+              className="h-96 rounded-lg"
             />
-          </div>
+          </Reveal>
         )}
 
         {/* 本文 */}
@@ -179,14 +190,14 @@ export default async function ArticlePage({
             article.body.map((block: any, idx: number) => {
               if (block._type === 'block') {
                 return (
-                  <p key={idx} className="text-base leading-8 text-gray-800 mb-6">
+                  <Reveal key={idx} as="p" className="reveal text-base leading-8 text-gray-800 mb-6">
                     {block.children?.map((child: any) => child.text).join('')}
-                  </p>
+                  </Reveal>
                 )
               }
               if (block._type === 'image' && block.asset) {
                 return (
-                  <figure key={idx} className="my-8">
+                  <Reveal key={idx} as="figure" className="reveal my-8">
                     <img
                       src={urlFor(block).width(1000).url()}
                       alt={block.alt || ''}
@@ -197,13 +208,13 @@ export default async function ArticlePage({
                         {block.caption}
                       </figcaption>
                     )}
-                  </figure>
+                  </Reveal>
                 )
               }
               if (block._type === 'embed' && block.url) {
                 const embed = toEmbedUrl(block.url)
                 return (
-                  <figure key={idx} className="my-8">
+                  <Reveal key={idx} as="figure" className="reveal my-8">
                     {embed ? (
                       <div className="overflow-hidden rounded-lg" style={{ aspectRatio: '16 / 9' }}>
                         <iframe
@@ -223,7 +234,7 @@ export default async function ArticlePage({
                         {block.caption}
                       </figcaption>
                     )}
-                  </figure>
+                  </Reveal>
                 )
               }
               return null
