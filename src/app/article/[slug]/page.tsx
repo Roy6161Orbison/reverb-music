@@ -1,9 +1,12 @@
+import type { Metadata } from 'next'
+import { cache } from 'react'
 import { sanityClient } from '@/lib/sanity'
 import { ARTICLE_BY_SLUG_QUERY } from '@/lib/queries'
 import Link from 'next/link'
 import { urlFor } from '@/lib/sanity'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { SITE_NAME, SITE_URL } from '@/lib/site'
 
 // 埋め込みURLを iframe 用の埋め込みURLに変換（YouTube / Spotify / Apple Music 対応）
 function toEmbedUrl(url: string): string | null {
@@ -48,29 +51,89 @@ type Article = {
   }
 }
 
-export default async function ArticlePage({ 
-  params 
-}: { 
-  params: Promise<{ slug: string }> 
+// generateMetadata と本体の二重取得を防ぐためキャッシュ
+const getArticle = cache(async (slug: string): Promise<Article | null> => {
+  try {
+    return await sanityClient.fetch(ARTICLE_BY_SLUG_QUERY, { slug })
+  } catch (error) {
+    console.error('Failed to fetch article:', error)
+    return null
+  }
+})
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const article = await getArticle(slug)
+
+  if (!article) {
+    return { title: '記事が見つかりません' }
+  }
+
+  const ogImage = article.image
+    ? urlFor(article.image).width(1200).height(630).fit('crop').url()
+    : undefined
+
+  return {
+    title: article.title,
+    description: article.excerpt,
+    alternates: { canonical: `/article/${slug}` },
+    openGraph: {
+      type: 'article',
+      title: article.title,
+      description: article.excerpt,
+      url: `${SITE_URL}/article/${slug}`,
+      publishedTime: article.publishedAt,
+      images: ogImage
+        ? [{ url: ogImage, width: 1200, height: 630, alt: article.title }]
+        : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.excerpt,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  }
+}
+
+export default async function ArticlePage({
+  params
+}: {
+  params: Promise<{ slug: string }>
 }) {
   // params を await で取得
   const { slug } = await params
-  
-  let article: Article | null = null
 
-  try {
-    article = await sanityClient.fetch(ARTICLE_BY_SLUG_QUERY, { slug })
-  } catch (error) {
-    console.error('Failed to fetch article:', error)
-    return <div className="text-center py-12">記事が見つかりません</div>
-  }
+  const article = await getArticle(slug)
 
   if (!article) {
     return <div className="text-center py-12">記事が見つかりません</div>
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.excerpt,
+    datePublished: article.publishedAt,
+    image: article.image
+      ? urlFor(article.image).width(1200).height(630).fit('crop').url()
+      : undefined,
+    author: article.artist ? { '@type': 'Person', name: article.artist } : undefined,
+    publisher: { '@type': 'Organization', name: SITE_NAME },
+    mainEntityOfPage: `${SITE_URL}/article/${slug}`,
+  }
+
   return (
     <main className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
 
       <article className="max-w-3xl mx-auto px-6 py-12">
