@@ -49,6 +49,7 @@ export default function HomeClient({ articles }: { articles: Article[] }) {
     { id: 'music', label: 'Music' },
     { id: 'film', label: 'Films' },
     { id: 'feature', label: 'Features' },
+    { id: 'essay', label: 'Essays' },
     { id: 'interview', label: 'Interviews' },
   ]
 
