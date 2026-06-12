@@ -20,7 +20,7 @@ export default function Header() {
     >
       <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
         <Link href="/">
-          <h1 className="font-serif text-2xl tracking-tight" style={{ fontWeight: 500 }}>{`Somethin' Else`}</h1>
+          <h1 className="text-lg uppercase tracking-widest" style={{ fontFamily: "'Syncopate', sans-serif" }}>{`Somethin' Else`}</h1>
         </Link>
         <nav className="hidden md:flex gap-6 font-label text-[0.65rem] uppercase">
           <Link href="/" className="nav-link hover:text-orange-700 transition-colors">Home</Link>
