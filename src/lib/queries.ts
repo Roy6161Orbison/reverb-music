@@ -41,3 +41,13 @@ export const ARTICLE_BY_SLUG_QUERY = `
     featured
   }
 `
+
+export const ABOUT_QUERY = `
+  *[_type == "aboutPage"][0] {
+    _id,
+    title,
+    subtitle,
+    image,
+    body
+  }
+`

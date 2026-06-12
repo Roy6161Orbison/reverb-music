@@ -23,9 +23,7 @@ export default function Header() {
           <h1 className="text-lg uppercase tracking-widest" style={{ fontFamily: "'Syncopate', sans-serif" }}>{`Somethin' Else`}</h1>
         </Link>
         <nav className="hidden md:flex gap-6 font-label text-[0.65rem] uppercase">
-          <Link href="/" className="nav-link hover:text-orange-700 transition-colors">Home</Link>
-          <Link href="#" className="nav-link hover:text-orange-700 transition-colors">About</Link>
-          <Link href="#" className="nav-link hover:text-orange-700 transition-colors">Archive</Link>
+          <Link href="/about" className="nav-link hover:text-orange-700 transition-colors">About Us</Link>
         </nav>
       </div>
     </header>
