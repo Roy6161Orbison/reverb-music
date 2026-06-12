@@ -13,6 +13,19 @@ export const ARTICLES_QUERY = `
   }
 `
 
+export const UPCOMING_EVENTS_QUERY = `
+  *[_type == "event" && date >= $now] | order(date asc) [0...10] {
+    _id,
+    artist,
+    venue,
+    city,
+    date,
+    ticketUrl,
+    image,
+    featured
+  }
+`
+
 export const ARTICLE_BY_SLUG_QUERY = `
   *[_type == "article" && slug.current == $slug][0] {
     _id,
