@@ -163,70 +163,70 @@ export default async function ArticlePage({
       <ReadingProgress />
       <Header />
 
-      <article className="max-w-3xl mx-auto px-6 py-12">
-        <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 mb-8 inline-block anim-fade-in transition-colors">
+      <article className="max-w-3xl mx-auto px-4 sm:px-6 py-7 sm:py-10 md:py-12">
+        <Link href="/" className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 mb-6 sm:mb-8 inline-block anim-fade-in transition-colors">
           ← ホームに戻る
         </Link>
 
         {/* 記事のメタ情報 */}
-        <p className="font-label text-[0.65rem] tracking-widest uppercase text-gray-500 mb-4 anim-fade-in-up">
+        <p className="font-label text-[0.6rem] sm:text-[0.65rem] tracking-widest uppercase text-gray-500 mb-3 sm:mb-4 anim-fade-in-up">
           {article.type === 'music' ? 'Music' : article.type === 'film' ? 'Film' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type === 'essay' ? 'Essay' : article.type}
           <span className="mx-2">•</span>
           {new Date(article.publishedAt).toLocaleDateString('ja-JP')}
         </p>
 
         {/* タイトル */}
-        <Reveal as="h1" className="text-reveal font-serif text-5xl mb-4 leading-tight" delay={80}>
+        <Reveal as="h1" className="text-reveal font-serif text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4 leading-tight" delay={80}>
           <span>{article.title}</span>
         </Reveal>
 
         {/* アーティスト */}
         {article.artist && (
-          <p className="text-xl text-gray-600 mb-6 anim-fade-in-up anim-delay-2">{article.artist}</p>
+          <p className="text-base sm:text-xl text-gray-600 mb-4 sm:mb-6 anim-fade-in-up anim-delay-2">{article.artist}</p>
         )}
 
         {/* スコア */}
         {article.score && (
-          <div className="flex items-baseline gap-4 mb-8 anim-fade-in-up anim-delay-2">
-            <span className="font-serif text-6xl text-orange-700">
+          <div className="flex items-baseline gap-3 sm:gap-4 mb-6 sm:mb-8 anim-fade-in-up anim-delay-2">
+            <span className="font-serif text-5xl sm:text-6xl text-orange-700">
               <ScoreCounter value={article.score.overall} />
             </span>
-            <p className="font-label text-[0.6rem] uppercase tracking-widest text-gray-600">Overall score</p>
+            <p className="font-label text-[0.55rem] sm:text-[0.6rem] uppercase tracking-widest text-gray-600">Overall score</p>
           </div>
         )}
 
         {/* カバー画像（パララックス） */}
         {article.image && (
-          <Reveal className="img-reveal mb-8 overflow-hidden rounded-lg" delay={120}>
+          <Reveal className="img-reveal mb-6 sm:mb-8 overflow-hidden rounded-lg" delay={120}>
             <ParallaxImage
               src={urlFor(article.image).width(1000).height(620).url()}
               alt={article.title}
-              className="h-96 rounded-lg"
+              className="h-56 sm:h-72 md:h-96 rounded-lg"
             />
           </Reveal>
         )}
 
         {/* 本文 */}
-        <div className="article-body prose prose-lg max-w-none mb-12 text-gray-900">
+        <div className="article-body prose prose-lg max-w-none mb-10 sm:mb-12 text-gray-900">
           {article.body && article.body.length > 0 ? (
             article.body.map((block: any, idx: number) => {
               if (block._type === 'block') {
                 return (
-                  <Reveal key={idx} as="p" className="reveal text-base leading-8 text-gray-800 mb-6">
+                  <Reveal key={idx} as="p" className="reveal text-[0.95rem] sm:text-base leading-7 sm:leading-8 text-gray-800 mb-5 sm:mb-6">
                     {block.children?.map((child: any) => child.text).join('')}
                   </Reveal>
                 )
               }
               if (block._type === 'image' && block.asset) {
                 return (
-                  <Reveal key={idx} as="figure" className="reveal my-8">
+                  <Reveal key={idx} as="figure" className="reveal my-6 sm:my-8">
                     <img
                       src={urlFor(block).width(1000).url()}
                       alt={block.alt || ''}
                       className="w-full rounded-lg"
                     />
                     {block.caption && (
-                      <figcaption className="mt-2 text-center text-sm text-gray-500">
+                      <figcaption className="mt-2 text-center text-xs sm:text-sm text-gray-500">
                         {block.caption}
                       </figcaption>
                     )}
@@ -236,7 +236,7 @@ export default async function ArticlePage({
               if (block._type === 'embed' && block.url) {
                 const embed = toEmbedUrl(block.url)
                 return (
-                  <Reveal key={idx} as="figure" className="reveal my-8">
+                  <Reveal key={idx} as="figure" className="reveal my-6 sm:my-8">
                     {embed ? (
                       <div className="overflow-hidden rounded-lg" style={{ aspectRatio: '16 / 9' }}>
                         <iframe
@@ -252,7 +252,7 @@ export default async function ArticlePage({
                       </a>
                     )}
                     {block.caption && (
-                      <figcaption className="mt-2 text-center text-sm text-gray-500">
+                      <figcaption className="mt-2 text-center text-xs sm:text-sm text-gray-500">
                         {block.caption}
                       </figcaption>
                     )}
