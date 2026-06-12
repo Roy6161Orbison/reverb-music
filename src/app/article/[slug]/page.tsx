@@ -185,7 +185,7 @@ export default async function ArticlePage({
         )}
 
         {/* 本文 */}
-        <div className="prose prose-lg max-w-none mb-12 text-gray-900">
+        <div className="article-body prose prose-lg max-w-none mb-12 text-gray-900">
           {article.body && article.body.length > 0 ? (
             article.body.map((block: any, idx: number) => {
               if (block._type === 'block') {

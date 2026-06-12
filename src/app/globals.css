@@ -46,6 +46,11 @@ a:hover { opacity: 0.7; }
 
 input::placeholder { color: var(--text-muted); }
 
+/* === Article body === */
+.article-body {
+  font-family: 'Times New Roman', Times, serif;
+}
+
 /* === Animations === */
 
 @keyframes fadeInUp {
