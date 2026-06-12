@@ -155,7 +155,7 @@ export default async function ArticlePage({
   ]
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -54,7 +54,7 @@ export default async function AboutPage() {
   const about = await getAbout()
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen">
       <Header />
 
       <article className="max-w-3xl mx-auto px-4 sm:px-6 py-7 sm:py-10 md:py-12">

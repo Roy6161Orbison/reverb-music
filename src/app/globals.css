@@ -4,6 +4,7 @@
 
 :root {
   --bg: #FFFFFF;
+  --bg-base: #F6F0E4;
   --text: #111111;
   --text-muted: #666666;
   --accent: #C8501F;
@@ -13,10 +14,10 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; background: var(--bg-base); }
 
 body {
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   font-family: 'Noto Sans JP', 'Inter', -apple-system, sans-serif;
   font-weight: 400;
@@ -24,6 +25,54 @@ body {
   letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* === Animated white↔beige gradient backdrop ===
+   Viewport-locked (position: fixed) so it never scrolls or stretches.
+   The motion is a GPU-composited transform on an oversized child —
+   no per-frame repaint, so it stays smooth. */
+.bg-gradient-motion {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: var(--bg-base);
+  overflow: hidden;
+}
+.bg-gradient-motion::before {
+  content: '';
+  position: absolute;
+  /* Oversized so the drift never exposes an edge */
+  inset: -40%;
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #f3ecdd 30%,
+    #ffffff 55%,
+    #e9dec8 80%,
+    #ffffff 100%
+  );
+  will-change: transform;
+  transform: translate3d(-6%, -5%, 0);
+  animation: bgDrift 32s ease-in-out infinite;
+}
+
+@keyframes bgDrift {
+  0%, 100% { transform: translate3d(-6%, -5%, 0); }
+  50%      { transform: translate3d(6%, 5%, 0); }
+}
+
+/* === Heavy film grain overlay ===
+   Static (no animation) and viewport-locked, so it adds no scroll jank.
+   Composited once with the gradient behind it. */
+.bg-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -203,6 +252,114 @@ input::placeholder { color: var(--text-muted); }
   animation-play-state: paused;
 }
 
+/* === SF-style site-name reveal (homepage only) ===
+   A hologram-resolving feel: wide tracking + blur + bloom that
+   smoothly converges. One-shot on mount. */
+.sf-title {
+  animation: sfTitleReveal 2.6s cubic-bezier(0.33, 1, 0.68, 1) both;
+  transform-origin: center center;
+  will-change: opacity, filter, transform;
+}
+@keyframes sfTitleReveal {
+  0% {
+    opacity: 0;
+    filter: blur(9px);
+    transform: scale(0.28);
+    text-shadow: 0 0 0 rgba(200, 80, 31, 0);
+  }
+  25% {
+    opacity: 1;
+    filter: blur(5px);
+  }
+  /* ブラーは早めに抜く */
+  60% {
+    filter: blur(0);
+  }
+  /* ここで通常サイズに到達しきる。以降はサイズ固定で光だけ収束 */
+  70% {
+    transform: scale(1);
+    text-shadow: 0 0 24px rgba(200, 80, 31, 0.55);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+    text-shadow: 0 0 0 rgba(200, 80, 31, 0);
+  }
+}
+
+/* === Analog-signal page transition overlay === */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 60; /* over header (z-50); pointer-events off so clicks pass */
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+}
+.page-transition.is-playing {
+  animation: ptFlash 0.65s ease-out both;
+}
+@keyframes ptFlash {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  68%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Scanlines with an analog horizontal jitter */
+.pt-scan {
+  position: absolute;
+  inset: -10% -2%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+  will-change: transform;
+}
+.is-playing .pt-scan {
+  animation: ptJitter 0.65s steps(8, end) both;
+}
+@keyframes ptJitter {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-7px); }
+  40%  { transform: translateX(5px); }
+  55%  { transform: translateX(-4px); }
+  70%  { transform: translateX(3px); }
+  85%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+/* Bright band that rolls down the screen (vertical-hold roll) */
+.pt-roll {
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: -45%;
+  height: 45%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 45%,
+    rgba(200, 80, 31, 0.12) 60%,
+    transparent 100%
+  );
+  filter: blur(2px);
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+.is-playing .pt-roll {
+  animation: ptRoll 0.65s cubic-bezier(0.45, 0, 0.25, 1) both;
+}
+@keyframes ptRoll {
+  from { transform: translateY(0); }
+  to   { transform: translateY(330%); }
+}
+
 /* === Accessibility: respect reduced motion === */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -217,4 +374,5 @@ input::placeholder { color: var(--text-muted); }
   .img-reveal { opacity: 1; transform: none; }
   .text-reveal > span { transform: none; }
   .marquee { animation: none; }
+  .page-transition { display: none; }
 }

@@ -101,8 +101,8 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
   }
 
   return (
-    <main className="min-h-screen bg-white">
-      <Header />
+    <main className="min-h-screen">
+      <Header animateTitle />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {mainArticle && (
