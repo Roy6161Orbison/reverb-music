@@ -50,11 +50,13 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
   const [gridKey, setGridKey] = useState(0)
   const [fading, setFading] = useState(false)
 
+  const hasEvents = events.length > 0
   const mainArticle = articles.find(a => a.featured) || articles[0]
 
-  const filteredArticles = activeTab === 'all'
+  const gridTab = activeTab === 'events' ? 'all' : activeTab
+  const filteredArticles = gridTab === 'all'
     ? articles.filter(a => a._id !== mainArticle._id)
-    : articles.filter(a => a.type === activeTab && a._id !== mainArticle._id)
+    : articles.filter(a => a.type === gridTab && a._id !== mainArticle._id)
 
   const tabs = [
     { id: 'all', label: 'All' },
@@ -105,45 +107,57 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
       <div className="max-w-6xl mx-auto px-6">
         {mainArticle && (
           <section className="py-12 border-b border-gray-200">
-            <Link href={`/article/${mainArticle.slug.current}`}>
-              <article className="cursor-pointer group">
-                {mainArticle.image && (
-                  <Reveal className="img-reveal mb-6 overflow-hidden rounded-lg">
-                    <img
-                      src={urlFor(mainArticle.image).width(800).height(500).url()}
-                      alt={mainArticle.title}
-                      className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </Reveal>
-                )}
-                <Reveal className="reveal" delay={80}>
-                  <p className="font-label text-[0.65rem] tracking-widest uppercase text-gray-500 mb-3">
-                    {typeLabel(mainArticle.type)}
-                    <span className="mx-2">•</span>
-                    {new Date(mainArticle.publishedAt).toLocaleDateString('ja-JP')}
-                  </p>
-                </Reveal>
-                <Reveal
-                  as="h2"
-                  className="text-reveal font-serif text-4xl mb-4 leading-tight group-hover:text-orange-700 transition-colors duration-300"
-                  delay={140}
-                >
-                  <span>{mainArticle.title}</span>
-                </Reveal>
-                <Reveal className="reveal" delay={220}>
-                  {mainArticle.artist && <p className="text-lg text-gray-600 mb-3">{mainArticle.artist}</p>}
-                  <p className="text-base text-gray-700 leading-relaxed max-w-2xl">{mainArticle.excerpt}</p>
-                  {mainArticle.score && (
-                    <p className="font-serif text-2xl text-orange-700 mt-4">{mainArticle.score.overall}</p>
+            <div className={hasEvents ? 'grid lg:grid-cols-3 gap-10' : ''}>
+              <Link
+                href={`/article/${mainArticle.slug.current}`}
+                className={hasEvents ? 'lg:col-span-2' : 'block'}
+              >
+                <article className="cursor-pointer group">
+                  {mainArticle.image && (
+                    <Reveal className="img-reveal mb-6 overflow-hidden rounded-lg">
+                      <img
+                        src={urlFor(mainArticle.image).width(800).height(500).url()}
+                        alt={mainArticle.title}
+                        className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    </Reveal>
                   )}
-                </Reveal>
-              </article>
-            </Link>
+                  <Reveal className="reveal" delay={80}>
+                    <p className="font-label text-[0.65rem] tracking-widest uppercase text-gray-500 mb-3">
+                      {typeLabel(mainArticle.type)}
+                      <span className="mx-2">•</span>
+                      {new Date(mainArticle.publishedAt).toLocaleDateString('ja-JP')}
+                    </p>
+                  </Reveal>
+                  <Reveal
+                    as="h2"
+                    className="text-reveal font-serif text-4xl mb-4 leading-tight group-hover:text-orange-700 transition-colors duration-300"
+                    delay={140}
+                  >
+                    <span>{mainArticle.title}</span>
+                  </Reveal>
+                  <Reveal className="reveal" delay={220}>
+                    {mainArticle.artist && <p className="text-lg text-gray-600 mb-3">{mainArticle.artist}</p>}
+                    <p className="text-base text-gray-700 leading-relaxed max-w-2xl">{mainArticle.excerpt}</p>
+                    {mainArticle.score && (
+                      <p className="font-serif text-2xl text-orange-700 mt-4">{mainArticle.score.overall}</p>
+                    )}
+                  </Reveal>
+                </article>
+              </Link>
+
+              {/* Web版: Featured記事の右にイベント */}
+              {hasEvents && (
+                <div className="hidden lg:block lg:col-span-1">
+                  <UpcomingEvents events={events} variant="sidebar" />
+                </div>
+              )}
+            </div>
           </section>
         )}
 
         <div className="py-8 border-b border-gray-200">
-          <div className="relative flex flex-wrap gap-x-6 gap-y-3 pb-2">
+          <div className="relative flex flex-wrap items-center gap-x-6 gap-y-3 pb-2">
             {tabs.map(tab => (
               <button
                 key={tab.id}
@@ -158,6 +172,22 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
                 {tab.label}
               </button>
             ))}
+
+            {/* スマホ版: Interviewsの右に Upcoming Events（タップで一覧表示） */}
+            {hasEvents && (
+              <button
+                ref={(el) => { tabRefs.current['events'] = el }}
+                onClick={() => handleTabChange('events')}
+                className={`lg:hidden font-label text-[0.7rem] tracking-widest uppercase transition-colors duration-200 ${
+                  activeTab === 'events'
+                    ? 'text-orange-700 font-bold'
+                    : 'text-orange-700/70 hover:text-orange-700'
+                }`}
+              >
+                Upcoming Events
+              </button>
+            )}
+
             <span
               className="tab-indicator"
               style={{ left: indicator.left, top: indicator.top, width: indicator.width }}
@@ -166,24 +196,32 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
         </div>
 
         <section className="py-12">
+          {/* スマホ版: Upcoming Events タブ選択時はイベント一覧を表示 */}
+          {activeTab === 'events' && (
+            <div className="lg:hidden">
+              <UpcomingEvents events={events} variant="full" />
+            </div>
+          )}
+
+          {/* 記事グリッド（PCでは常時、スマホでは events タブ以外で表示） */}
           <div
-            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-[180ms] ${
+            className={`${activeTab === 'events' ? 'hidden lg:block' : 'block'} transition-opacity duration-[180ms] ${
               fading ? 'opacity-0' : 'opacity-100'
             }`}
           >
-            {filteredArticles.map((article, index) => (
-              <Reveal
-                key={`${gridKey}-${article._id}`}
-                className="reveal"
-                delay={Math.min(index * 70, 420)}
-              >
-                <ArticleCard article={article} />
-              </Reveal>
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredArticles.map((article, index) => (
+                <Reveal
+                  key={`${gridKey}-${article._id}`}
+                  className="reveal"
+                  delay={Math.min(index * 70, 420)}
+                >
+                  <ArticleCard article={article} />
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
-
-        <UpcomingEvents events={events} />
       </div>
 
       <Footer />

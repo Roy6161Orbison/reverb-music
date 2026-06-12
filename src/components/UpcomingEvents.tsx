@@ -12,21 +12,63 @@ type Event = {
   featured?: boolean
 }
 
-export default function UpcomingEvents({ events }: { events: Event[] }) {
+const formatDate = (iso: string) => {
+  const d = new Date(iso)
+  return {
+    month: d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+    day: d.getDate(),
+    weekday: d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase(),
+    time: d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+  }
+}
+
+export default function UpcomingEvents({
+  events,
+  variant = 'full',
+}: {
+  events: Event[]
+  variant?: 'full' | 'sidebar'
+}) {
   if (events.length === 0) return null
 
-  const formatDate = (iso: string) => {
-    const d = new Date(iso)
-    return {
-      month: d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
-      day: d.getDate(),
-      weekday: d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase(),
-      time: d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
-    }
+  if (variant === 'sidebar') {
+    return (
+      <aside className="lg:border-l lg:border-gray-200 lg:pl-8 h-full">
+        <h2 className="font-serif text-xl mb-5 tracking-tight">Upcoming Events</h2>
+        <div className="divide-y divide-gray-100">
+          {events.map((ev) => {
+            const { month, day, time } = formatDate(ev.date)
+            return (
+              <div key={ev._id} className="group py-3">
+                <div className="flex items-baseline gap-2 mb-0.5">
+                  <span className="font-label text-[0.6rem] text-orange-700 tracking-widest">{month}</span>
+                  <span className="font-serif text-lg leading-none">{day}</span>
+                  <span className="font-label text-[0.55rem] text-gray-400 tracking-widest">{time}</span>
+                </div>
+                <p className="font-serif text-base leading-tight">{ev.artist}</p>
+                <p className="text-xs text-gray-500 truncate">
+                  {ev.venue}{ev.city ? ` — ${ev.city}` : ''}
+                </p>
+                {ev.ticketUrl && (
+                  <Link
+                    href={ev.ticketUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mt-1 font-label text-[0.6rem] tracking-widest uppercase text-gray-600 hover:text-orange-700 transition-colors"
+                  >
+                    Tickets →
+                  </Link>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </aside>
+    )
   }
 
   return (
-    <section className="py-12 border-t border-gray-200">
+    <section className="py-4">
       <h2 className="font-serif text-2xl mb-8 tracking-tight">Upcoming Events</h2>
       <div className="divide-y divide-gray-100">
         {events.map((ev) => {
@@ -70,7 +112,6 @@ export default function UpcomingEvents({ events }: { events: Event[] }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-shrink-0 font-label text-[0.65rem] tracking-widest uppercase border border-gray-300 px-3 py-1.5 hover:border-orange-700 hover:text-orange-700 transition-colors duration-200"
-                  onClick={(e) => e.stopPropagation()}
                 >
                   Tickets
                 </Link>
