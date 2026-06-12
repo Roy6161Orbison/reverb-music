@@ -103,7 +103,7 @@ export default function HomeClient({ articles }: { articles: Article[] }) {
                   </Reveal>
                 )}
                 <Reveal className="reveal" delay={80}>
-                  <p className="text-xs tracking-widest uppercase text-gray-500 mb-3">
+                  <p className="font-label text-[0.65rem] tracking-widest uppercase text-gray-500 mb-3">
                     {typeLabel(mainArticle.type)}
                     <span className="mx-2">•</span>
                     {new Date(mainArticle.publishedAt).toLocaleDateString('ja-JP')}
@@ -135,9 +135,9 @@ export default function HomeClient({ articles }: { articles: Article[] }) {
                 key={tab.id}
                 ref={(el) => { tabRefs.current[tab.id] = el }}
                 onClick={() => handleTabChange(tab.id)}
-                className={`text-sm tracking-widest uppercase transition-colors duration-200 ${
+                className={`font-label text-[0.7rem] tracking-widest uppercase transition-colors duration-200 ${
                   activeTab === tab.id
-                    ? 'text-black font-semibold'
+                    ? 'text-black font-bold'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -188,7 +188,7 @@ function ArticleCard({ article }: { article: Article }) {
             />
           </div>
         )}
-        <p className="text-xs tracking-widest uppercase text-gray-500 mb-2">
+        <p className="font-label text-[0.65rem] tracking-widest uppercase text-gray-500 mb-2">
           {typeLabel(article.type)}
         </p>
         <h3 className="font-serif text-xl mb-2 leading-tight group-hover:text-orange-700 transition-colors duration-300">

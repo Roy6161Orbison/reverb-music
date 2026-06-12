@@ -147,7 +147,7 @@ export default async function ArticlePage({
         </Link>
 
         {/* 記事のメタ情報 */}
-        <p className="text-xs tracking-widest uppercase text-gray-500 mb-4 anim-fade-in-up">
+        <p className="font-label text-[0.65rem] tracking-widest uppercase text-gray-500 mb-4 anim-fade-in-up">
           {article.type === 'music' ? 'Music' : article.type === 'film' ? 'Film' : article.type === 'interview' ? 'Interview' : article.type === 'feature' ? 'Feature' : article.type}
           <span className="mx-2">•</span>
           {new Date(article.publishedAt).toLocaleDateString('ja-JP')}
@@ -169,7 +169,7 @@ export default async function ArticlePage({
             <span className="font-serif text-6xl text-orange-700">
               <ScoreCounter value={article.score.overall} />
             </span>
-            <p className="text-xs uppercase tracking-widest text-gray-600">Overall score</p>
+            <p className="font-label text-[0.6rem] uppercase tracking-widest text-gray-600">Overall score</p>
           </div>
         )}
 
