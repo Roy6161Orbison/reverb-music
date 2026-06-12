@@ -31,7 +31,10 @@ export default async function Home() {
   let events: Event[] = []
 
   try {
-    const now = new Date().toISOString()
+    // 今日の0時(UTC)以降を「これからのイベント」として扱う
+    const startOfToday = new Date()
+    startOfToday.setUTCHours(0, 0, 0, 0)
+    const now = startOfToday.toISOString()
     ;[articles, events] = await Promise.all([
       sanityClient.fetch(ARTICLES_QUERY),
       sanityClient.fetch(UPCOMING_EVENTS_QUERY, { now }),
