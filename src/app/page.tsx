@@ -1,6 +1,7 @@
 import { sanityClient } from '@/lib/sanity'
 import { ARTICLES_QUERY, UPCOMING_EVENTS_QUERY } from '@/lib/queries'
 import HomeClient from '@/components/HomeClient'
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site'
 
 export const revalidate = 60
 
@@ -43,5 +44,31 @@ export default async function Home() {
     console.error('Failed to fetch:', error)
   }
 
-  return <HomeClient articles={articles} events={events} />
+  // WebSite + Organization の構造化データ（検索エンジン向け）
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      inLanguage: 'ja',
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+  ]
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <HomeClient articles={articles} events={events} />
+    </>
+  )
 }

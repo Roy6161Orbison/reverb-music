@@ -12,6 +12,8 @@ import Reveal from '@/components/Reveal'
 import ParallaxImage from '@/components/ParallaxImage'
 import { SITE_NAME, SITE_URL } from '@/lib/site'
 
+export const revalidate = 60
+
 // 埋め込みURLを iframe 用の埋め込みURLに変換（YouTube / Spotify / Apple Music 対応）
 function toEmbedUrl(url: string): string | null {
   try {
@@ -118,19 +120,39 @@ export default async function ArticlePage({
     return <div className="text-center py-12">記事が見つかりません</div>
   }
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: article.title,
-    description: article.excerpt,
-    datePublished: article.publishedAt,
-    image: article.image
-      ? urlFor(article.image).width(1200).height(630).fit('crop').url()
-      : undefined,
-    author: article.artist ? { '@type': 'Person', name: article.artist } : undefined,
-    publisher: { '@type': 'Organization', name: SITE_NAME },
-    mainEntityOfPage: `${SITE_URL}/article/${slug}`,
-  }
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: article.title,
+      description: article.excerpt,
+      datePublished: article.publishedAt,
+      inLanguage: 'ja',
+      image: article.image
+        ? urlFor(article.image).width(1200).height(630).fit('crop').url()
+        : undefined,
+      // アーティストは記事の「主題」(author ではなく about)
+      about: article.artist
+        ? { '@type': 'MusicGroup', name: article.artist }
+        : undefined,
+      author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+      publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+      mainEntityOfPage: `${SITE_URL}/article/${slug}`,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: article.title,
+          item: `${SITE_URL}/article/${slug}`,
+        },
+      ],
+    },
+  ]
 
   return (
     <main className="min-h-screen bg-white">
