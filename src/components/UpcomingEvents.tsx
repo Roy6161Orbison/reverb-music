@@ -33,7 +33,7 @@ export default function UpcomingEvents({
 
   if (variant === 'sidebar') {
     return (
-      <aside className="lg:border-l lg:border-gray-200 lg:pl-8 h-full">
+      <aside className="lg:border-l lg:border-gray-200 lg:pl-8 overflow-y-auto max-h-[480px]">
         <h2 className="font-serif text-xl mb-5 tracking-tight">Upcoming Events</h2>
         <div className="divide-y divide-gray-100">
           {events.map((ev) => {
