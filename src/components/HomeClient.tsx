@@ -6,6 +6,7 @@ import { urlFor } from '@/lib/sanity'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
+import UpcomingEvents from '@/components/UpcomingEvents'
 
 type Article = {
   _id: string
@@ -33,7 +34,18 @@ const typeLabel = (type: string) =>
     : type === 'essay' ? 'Essay'
     : type
 
-export default function HomeClient({ articles }: { articles: Article[] }) {
+type Event = {
+  _id: string
+  artist: string
+  venue: string
+  city?: string
+  date: string
+  ticketUrl?: string
+  image?: { asset: { _ref: string } }
+  featured?: boolean
+}
+
+export default function HomeClient({ articles, events = [] }: { articles: Article[], events?: Event[] }) {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [gridKey, setGridKey] = useState(0)
   const [fading, setFading] = useState(false)
@@ -170,6 +182,8 @@ export default function HomeClient({ articles }: { articles: Article[] }) {
             ))}
           </div>
         </section>
+
+        <UpcomingEvents events={events} />
       </div>
 
       <Footer />

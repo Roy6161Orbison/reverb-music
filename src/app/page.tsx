@@ -1,7 +1,6 @@
 import { sanityClient } from '@/lib/sanity'
 import { ARTICLES_QUERY, UPCOMING_EVENTS_QUERY } from '@/lib/queries'
 import HomeClient from '@/components/HomeClient'
-import UpcomingEvents from '@/components/UpcomingEvents'
 
 export const revalidate = 60
 
@@ -41,12 +40,5 @@ export default async function Home() {
     console.error('Failed to fetch:', error)
   }
 
-  return (
-    <>
-      <HomeClient articles={articles} />
-      <div className="max-w-6xl mx-auto px-6">
-        <UpcomingEvents events={events} />
-      </div>
-    </>
-  )
+  return <HomeClient articles={articles} events={events} />
 }
