@@ -199,7 +199,7 @@ export default async function ArticlePage({
         {article.image && (
           <Reveal className="img-reveal mb-6 sm:mb-8 overflow-hidden rounded-lg" delay={120}>
             <ParallaxImage
-              src={urlFor(article.image).width(1000).height(620).url()}
+              src={urlFor(article.image).width(2000).height(1240).quality(90).auto('format').url()}
               alt={article.title}
               className="h-56 sm:h-72 md:h-96 rounded-lg"
             />
@@ -221,7 +221,7 @@ export default async function ArticlePage({
                 return (
                   <Reveal key={idx} as="figure" className="reveal my-6 sm:my-8">
                     <img
-                      src={urlFor(block).width(1000).url()}
+                      src={urlFor(block).width(1600).quality(90).auto('format').url()}
                       alt={block.alt || ''}
                       className="w-full rounded-lg"
                     />

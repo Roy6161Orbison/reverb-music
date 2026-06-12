@@ -89,7 +89,7 @@ export default function UpcomingEvents({
               {ev.image && (
                 <div className="flex-shrink-0 w-12 h-12 rounded overflow-hidden">
                   <img
-                    src={urlFor(ev.image).width(96).height(96).url()}
+                    src={urlFor(ev.image).width(144).height(144).quality(85).auto('format').url()}
                     alt={ev.artist}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />

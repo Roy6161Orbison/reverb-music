@@ -75,7 +75,7 @@ export default async function AboutPage() {
             {about.image && (
               <Reveal className="img-reveal mb-7 sm:mb-10 overflow-hidden rounded-lg" delay={120}>
                 <img
-                  src={urlFor(about.image).width(1000).height(620).url()}
+                  src={urlFor(about.image).width(2000).height(1240).quality(90).auto('format').url()}
                   alt={about.image.alt || about.title}
                   className="w-full h-56 sm:h-72 md:h-96 object-cover rounded-lg"
                 />
@@ -96,7 +96,7 @@ export default async function AboutPage() {
                     return (
                       <Reveal key={idx} as="figure" className="reveal my-6 sm:my-8">
                         <img
-                          src={urlFor(block).width(1000).url()}
+                          src={urlFor(block).width(1600).quality(90).auto('format').url()}
                           alt={block.alt || ''}
                           className="w-full rounded-lg"
                         />

@@ -116,7 +116,7 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
                   {mainArticle.image && (
                     <Reveal className="img-reveal mb-4 sm:mb-6 overflow-hidden rounded-lg">
                       <img
-                        src={urlFor(mainArticle.image).width(800).height(500).url()}
+                        src={urlFor(mainArticle.image).width(1600).height(1000).quality(90).auto('format').url()}
                         alt={mainArticle.title}
                         className="w-full h-52 sm:h-72 md:h-96 object-cover group-hover:scale-105 transition-transform duration-700"
                       />
@@ -243,7 +243,7 @@ function ArticleCard({ article }: { article: Article }) {
         {article.image && (
           <div className="mb-3 overflow-hidden rounded-lg">
             <img
-              src={urlFor(article.image).width(400).height(250).url()}
+              src={urlFor(article.image).width(800).height(500).quality(85).auto('format').url()}
               alt={article.title}
               className="w-full h-44 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-700"
             />
