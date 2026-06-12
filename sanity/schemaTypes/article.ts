@@ -104,6 +104,7 @@ export const article = defineType({
           {title: 'Films', value: 'film'},
           {title: 'Feature', value: 'feature'},
           {title: 'Interview', value: 'interview'},
+          {title: 'Essay', value: 'essay'},
           {title: 'News', value: 'news'},
         ],
       },

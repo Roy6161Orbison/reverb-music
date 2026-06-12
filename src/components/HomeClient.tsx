@@ -11,7 +11,7 @@ type Article = {
   _id: string
   slug: { current: string }
   title: string
-  type: 'music' | 'film' | 'feature' | 'interview' | 'news' | 'review'
+  type: 'music' | 'film' | 'feature' | 'interview' | 'essay' | 'news' | 'review'
   publishedAt: string
   excerpt: string
   score?: { overall: number }
@@ -30,6 +30,7 @@ const typeLabel = (type: string) =>
     : type === 'film' ? 'Film'
     : type === 'interview' ? 'Interview'
     : type === 'feature' ? 'Feature'
+    : type === 'essay' ? 'Essay'
     : type
 
 export default function HomeClient({ articles }: { articles: Article[] }) {
