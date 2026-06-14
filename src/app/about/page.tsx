@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { cache } from 'react'
+import Image from 'next/image'
 import { sanityClient, urlFor } from '@/lib/sanity'
 import { ABOUT_QUERY } from '@/lib/queries'
 import Header from '@/components/Header'
@@ -74,9 +75,12 @@ export default async function AboutPage() {
 
             {about.image && (
               <Reveal className="img-reveal mb-7 sm:mb-10 overflow-hidden rounded-lg" delay={120}>
-                <img
+                <Image
                   src={urlFor(about.image).width(2000).height(1240).quality(90).auto('format').url()}
                   alt={about.image.alt || about.title}
+                  width={2000}
+                  height={1240}
+                  priority
                   className="w-full h-56 sm:h-72 md:h-96 object-cover rounded-lg"
                 />
               </Reveal>
@@ -95,9 +99,12 @@ export default async function AboutPage() {
                   if (block._type === 'image' && block.asset) {
                     return (
                       <Reveal key={idx} as="figure" className="reveal my-6 sm:my-8">
-                        <img
+                        <Image
                           src={urlFor(block).width(1600).quality(90).auto('format').url()}
                           alt={block.alt || ''}
+                          width={1600}
+                          height={1000}
+                          loading="lazy"
                           className="w-full rounded-lg"
                         />
                         {block.caption && (

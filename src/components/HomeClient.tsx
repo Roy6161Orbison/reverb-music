@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { urlFor } from '@/lib/sanity'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -55,9 +55,11 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
   const mainArticle = articles.find(a => a.featured) || articles[0]
 
   const gridTab = activeTab === 'events' ? 'all' : activeTab
-  const filteredArticles = gridTab === 'all'
-    ? articles.filter(a => a._id !== mainArticle._id)
-    : articles.filter(a => a.type === gridTab && a._id !== mainArticle._id)
+  const filteredArticles = useMemo(() => {
+    return gridTab === 'all'
+      ? articles.filter(a => a._id !== mainArticle._id)
+      : articles.filter(a => a.type === gridTab && a._id !== mainArticle._id)
+  }, [gridTab, articles, mainArticle._id])
 
   const tabs = [
     { id: 'all', label: 'All' },
@@ -240,7 +242,7 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
   )
 }
 
-function ArticleCard({ article }: { article: Article }) {
+const ArticleCard = React.memo(function ArticleCard({ article }: { article: Article }) {
   return (
     <Link href={`/article/${article.slug.current}`}>
       <article className="cursor-pointer group">
@@ -272,4 +274,4 @@ function ArticleCard({ article }: { article: Article }) {
       </article>
     </Link>
   )
-}
+})

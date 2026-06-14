@@ -9,7 +9,7 @@ export const sanityClient = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: false,
+  useCdn: true,
 })
 
 const builder = imageUrlBuilder(sanityClient)

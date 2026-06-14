@@ -1,5 +1,5 @@
 export const ARTICLES_QUERY = `
-  *[_type == "article"] | order(publishedAt desc) {
+  *[_type == "article"] | order(publishedAt desc) [0...24] {
     _id,
     slug,
     title,
