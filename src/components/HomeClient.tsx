@@ -268,9 +268,20 @@ const ArticleCard = React.memo(function ArticleCard({ article }: { article: Arti
           <p className="text-xs sm:text-sm text-gray-600 mb-1.5 sm:mb-2">{article.artist}</p>
         )}
         <p className="text-xs sm:text-sm text-gray-700 leading-relaxed line-clamp-3">{article.excerpt}</p>
-        {article.score && (
-          <p className="font-serif text-base sm:text-lg text-orange-700 mt-2">{article.score.overall}</p>
-        )}
+        <div className="flex items-center justify-between mt-2">
+          {article.score && (
+            <p className="font-serif text-base sm:text-lg text-orange-700">{article.score.overall}</p>
+          )}
+          {process.env.NODE_ENV === 'development' && (
+            <Link 
+              href={`/edit/${article._id}`}
+              className="text-[0.65rem] tracking-widest uppercase text-orange-700 hover:underline z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Edit
+            </Link>
+          )}
+        </div>
       </article>
     </Link>
   )

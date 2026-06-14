@@ -143,9 +143,16 @@ export default async function ArticlePage({
       <Header />
 
       <article className="max-w-3xl mx-auto px-4 sm:px-6 py-7 sm:py-10 md:py-12">
-        <Link href="/" className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 mb-6 sm:mb-8 inline-block anim-fade-in transition-colors">
-          ← ホームに戻る
-        </Link>
+        <div className="flex items-center justify-between mb-6 sm:mb-8 anim-fade-in">
+          <Link href="/" className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            ← ホームに戻る
+          </Link>
+          {process.env.NODE_ENV === 'development' && (
+            <Link href={`/edit/${article._id}`} className="text-xs sm:text-sm text-orange-700 hover:underline tracking-widest uppercase">
+              Edit Article
+            </Link>
+          )}
+        </div>
 
         {/* 記事のメタ情報 */}
         <p className="font-label text-[0.6rem] sm:text-[0.65rem] tracking-widest uppercase text-gray-500 mb-3 sm:mb-4 anim-fade-in-up">

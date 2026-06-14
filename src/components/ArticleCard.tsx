@@ -47,6 +47,14 @@ export default function ArticleCard({ article }: { article: Article }) {
                 <span className="text-orange font-serif text-sm">{article.score.overall}</span>
               </>
             )}
+            {process.env.NODE_ENV === 'development' && (
+              <>
+                <span>•</span>
+                <Link href={`/edit/${article._id}`} className="text-orange hover:underline">
+                  編集
+                </Link>
+              </>
+            )}
           </div>
 
           <p className="text-base leading-relaxed text-ink/80 mb-6 font-light">
