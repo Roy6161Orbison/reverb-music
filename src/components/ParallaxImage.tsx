@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 type ParallaxImageProps = {
   src: string
@@ -17,8 +17,8 @@ export default function ParallaxImage({
   className = '',
   strength = 40,
 }: ParallaxImageProps) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [offset, setOffset] = useState(0)
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -27,20 +27,22 @@ export default function ParallaxImage({
     const onScroll = () => {
       cancelAnimationFrame(raf)
       raf = requestAnimationFrame(() => {
-        const el = ref.current
-        if (!el) return
+        const el = wrapRef.current
+        const img = imgRef.current
+        if (!el || !img) return
         const rect = el.getBoundingClientRect()
         const vh = window.innerHeight
         const center = rect.top + rect.height / 2
-        // -1 (element below viewport) → 1 (above viewport)
         const progress = (center - vh / 2) / (vh / 2 + rect.height / 2)
-        setOffset(progress * strength)
+        const offset = progress * strength
+        // setState を使わず DOM を直接書き換えることで再レンダリングを回避
+        img.style.transform = `translate3d(0, ${offset}px, 0) scale(1.12)`
       })
     }
 
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
+    window.addEventListener('resize', onScroll, { passive: true })
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
@@ -49,12 +51,13 @@ export default function ParallaxImage({
   }, [strength])
 
   return (
-    <div ref={ref} className={`overflow-hidden ${className}`}>
+    <div ref={wrapRef} className={`overflow-hidden ${className}`}>
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         className="w-full h-full object-cover will-change-transform"
-        style={{ transform: `translate3d(0, ${offset}px, 0) scale(1.12)` }}
+        style={{ transform: 'translate3d(0, 0, 0) scale(1.12)' }}
       />
     </div>
   )

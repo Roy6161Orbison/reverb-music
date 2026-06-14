@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { urlFor } from '@/lib/sanity'
 import Header from '@/components/Header'
@@ -115,9 +116,12 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
                 <article className="cursor-pointer group">
                   {mainArticle.image && (
                     <Reveal className="img-reveal mb-4 sm:mb-6 overflow-hidden rounded-lg">
-                      <img
+                      <Image
                         src={urlFor(mainArticle.image).width(1600).height(1000).quality(90).auto('format').url()}
                         alt={mainArticle.title}
+                        width={1600}
+                        height={1000}
+                        priority
                         className="w-full h-52 sm:h-72 md:h-96 object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                     </Reveal>
@@ -242,9 +246,12 @@ function ArticleCard({ article }: { article: Article }) {
       <article className="cursor-pointer group">
         {article.image && (
           <div className="mb-3 overflow-hidden rounded-lg">
-            <img
+            <Image
               src={urlFor(article.image).width(800).height(500).quality(85).auto('format').url()}
               alt={article.title}
+              width={800}
+              height={500}
+              loading="lazy"
               className="w-full h-44 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-700"
             />
           </div>

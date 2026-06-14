@@ -179,6 +179,7 @@ input::placeholder { color: var(--text-muted); }
 .reveal.is-visible {
   opacity: 1;
   transform: none;
+  will-change: auto;
 }
 
 @media (max-width: 767px) {
@@ -201,6 +202,7 @@ input::placeholder { color: var(--text-muted); }
 .img-reveal.is-visible {
   opacity: 1;
   transform: scale(1);
+  will-change: auto;
 }
 
 @media (max-width: 767px) {
@@ -224,6 +226,7 @@ input::placeholder { color: var(--text-muted); }
 }
 .text-reveal.is-visible > span {
   transform: translateY(0);
+  will-change: auto;
 }
 
 /* === Sliding tab indicator === */
@@ -257,8 +260,12 @@ input::placeholder { color: var(--text-muted); }
    smoothly converges. One-shot on mount. */
 .sf-title {
   animation: sfTitleReveal 2.6s cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation-fill-mode: forwards;
   transform-origin: center center;
   will-change: opacity, filter, transform;
+}
+.sf-title[data-anim-done] {
+  will-change: auto;
 }
 @keyframes sfTitleReveal {
   0% {

@@ -3,6 +3,7 @@ import { cache } from 'react'
 import { sanityClient } from '@/lib/sanity'
 import { ARTICLE_BY_SLUG_QUERY } from '@/lib/queries'
 import Link from 'next/link'
+import Image from 'next/image'
 import { urlFor } from '@/lib/sanity'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -220,9 +221,12 @@ export default async function ArticlePage({
               if (block._type === 'image' && block.asset) {
                 return (
                   <Reveal key={idx} as="figure" className="reveal my-6 sm:my-8">
-                    <img
+                    <Image
                       src={urlFor(block).width(1600).quality(90).auto('format').url()}
                       alt={block.alt || ''}
+                      width={1600}
+                      height={1000}
+                      loading="lazy"
                       className="w-full rounded-lg"
                     />
                     {block.caption && (
