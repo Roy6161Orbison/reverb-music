@@ -3,10 +3,10 @@ import { writeClient } from '@/lib/sanity.write'
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id
+    const { id } = await params
     const body = await request.json()
 
     // セキュリティ上の配慮: 実際の運用ではここで認証（NextAuthなど）をチェックすべきです
@@ -33,10 +33,10 @@ export async function PATCH(
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id
+    const { id } = await params
     const article = await writeClient.fetch(`*[_id == $id][0]`, { id })
     
     if (!article) {
