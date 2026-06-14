@@ -12,7 +12,11 @@ export default defineConfig({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '941ja3ai',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   basePath: '/studio',
-  plugins: [structureTool({structure}), visionTool()],
+  plugins: [
+    structureTool({structure}),
+    // Vision tool is only loaded in development to avoid production overhead
+    ...(process.env.NODE_ENV === 'development' ? [visionTool()] : []),
+  ],
   schema: {
     types: schemaTypes,
     // シングルトンは「新規作成」グローバルメニューから除外（1ページに固定）
