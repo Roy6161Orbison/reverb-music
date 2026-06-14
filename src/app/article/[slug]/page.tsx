@@ -11,34 +11,12 @@ import ReadingProgress from '@/components/ReadingProgress'
 import ScoreCounter from '@/components/ScoreCounter'
 import Reveal from '@/components/Reveal'
 import ParallaxImage from '@/components/ParallaxImage'
+import PortableTextRenderer from '@/components/PortableTextRenderer'
 import { SITE_NAME, SITE_URL } from '@/lib/site'
 
 export const revalidate = 60
 
-// 埋め込みURLを iframe 用の埋め込みURLに変換（YouTube / Spotify / Apple Music 対応）
-function toEmbedUrl(url: string): string | null {
-  try {
-    const u = new URL(url)
-    const host = u.hostname.replace(/^www\./, '')
 
-    if (host === 'youtu.be') {
-      return `https://www.youtube.com/embed/${u.pathname.slice(1)}`
-    }
-    if (host === 'youtube.com' || host === 'm.youtube.com') {
-      const id = u.searchParams.get('v')
-      return id ? `https://www.youtube.com/embed/${id}` : null
-    }
-    if (host === 'open.spotify.com') {
-      return `https://open.spotify.com/embed${u.pathname}`
-    }
-    if (host === 'music.apple.com') {
-      return `https://embed.music.apple.com${u.pathname}${u.search}`
-    }
-    return null
-  } catch {
-    return null
-  }
-}
 
 type Article = {
   _id: string
@@ -210,61 +188,7 @@ export default async function ArticlePage({
         {/* 本文 */}
         <div className="article-body prose prose-lg max-w-none mb-10 sm:mb-12 text-gray-900">
           {article.body && article.body.length > 0 ? (
-            article.body.map((block: any, idx: number) => {
-              if (block._type === 'block') {
-                return (
-                  <Reveal key={idx} as="p" className="reveal text-[0.95rem] sm:text-base leading-7 sm:leading-8 text-gray-800 mb-5 sm:mb-6">
-                    {block.children?.map((child: any) => child.text).join('')}
-                  </Reveal>
-                )
-              }
-              if (block._type === 'image' && block.asset) {
-                return (
-                  <Reveal key={idx} as="figure" className="reveal my-6 sm:my-8">
-                    <Image
-                      src={urlFor(block).width(1600).quality(90).auto('format').url()}
-                      alt={block.alt || ''}
-                      width={1600}
-                      height={1000}
-                      loading="lazy"
-                      className="w-full rounded-lg"
-                    />
-                    {block.caption && (
-                      <figcaption className="mt-2 text-center text-xs sm:text-sm text-gray-500">
-                        {block.caption}
-                      </figcaption>
-                    )}
-                  </Reveal>
-                )
-              }
-              if (block._type === 'embed' && block.url) {
-                const embed = toEmbedUrl(block.url)
-                return (
-                  <Reveal key={idx} as="figure" className="reveal my-6 sm:my-8">
-                    {embed ? (
-                      <div className="overflow-hidden rounded-lg" style={{ aspectRatio: '16 / 9' }}>
-                        <iframe
-                          src={embed}
-                          className="h-full w-full"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      </div>
-                    ) : (
-                      <a href={block.url} target="_blank" rel="noopener noreferrer" className="text-orange-700 underline">
-                        {block.url}
-                      </a>
-                    )}
-                    {block.caption && (
-                      <figcaption className="mt-2 text-center text-xs sm:text-sm text-gray-500">
-                        {block.caption}
-                      </figcaption>
-                    )}
-                  </Reveal>
-                )
-              }
-              return null
-            })
+            <PortableTextRenderer value={article.body} />
           ) : (
             <p className="text-gray-600">[記事本文がまだありません]</p>
           )}

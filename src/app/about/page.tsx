@@ -6,6 +6,7 @@ import { ABOUT_QUERY } from '@/lib/queries'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
+import PortableTextRendererAbout from '@/components/PortableTextRendererAbout'
 import { SITE_URL } from '@/lib/site'
 
 export const revalidate = 60
@@ -88,35 +89,7 @@ export default async function AboutPage() {
 
             <div className="article-body prose prose-lg max-w-none text-gray-900">
               {about.body && about.body.length > 0 ? (
-                about.body.map((block: any, idx: number) => {
-                  if (block._type === 'block') {
-                    return (
-                      <Reveal key={idx} as="p" className="reveal text-[0.95rem] sm:text-base leading-7 sm:leading-8 text-gray-800 mb-5 sm:mb-6">
-                        {block.children?.map((child: any) => child.text).join('')}
-                      </Reveal>
-                    )
-                  }
-                  if (block._type === 'image' && block.asset) {
-                    return (
-                      <Reveal key={idx} as="figure" className="reveal my-6 sm:my-8">
-                        <Image
-                          src={urlFor(block).width(1600).quality(90).auto('format').url()}
-                          alt={block.alt || ''}
-                          width={1600}
-                          height={1000}
-                          loading="lazy"
-                          className="w-full rounded-lg"
-                        />
-                        {block.caption && (
-                          <figcaption className="mt-2 text-center text-xs sm:text-sm text-gray-500">
-                            {block.caption}
-                          </figcaption>
-                        )}
-                      </Reveal>
-                    )
-                  }
-                  return null
-                })
+                <PortableTextRendererAbout value={about.body} />
               ) : (
                 <p className="text-gray-600">[本文がまだありません]</p>
               )}

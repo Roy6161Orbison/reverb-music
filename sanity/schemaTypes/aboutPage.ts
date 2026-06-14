@@ -35,7 +35,38 @@ export const aboutPage = defineType({
       title: 'Body',
       type: 'array',
       of: [
-        defineArrayMember({type: 'block'}),
+        defineArrayMember({
+          type: 'block',
+          marks: {
+            decorators: [
+              {title: 'Bold', value: 'strong'},
+              {title: 'Italic', value: 'em'},
+              {title: 'Underline', value: 'underline'},
+              {title: 'Code', value: 'code'},
+            ],
+            annotations: [
+              {
+                title: 'Link',
+                name: 'link',
+                type: 'object',
+                fields: [
+                  {
+                    title: 'URL',
+                    name: 'href',
+                    type: 'url',
+                    validation: (Rule: any) => Rule.required(),
+                  },
+                  {
+                    title: '新しいタブで開く',
+                    name: 'blank',
+                    type: 'boolean',
+                    initialValue: true,
+                  },
+                ],
+              },
+            ],
+          },
+        }),
         defineArrayMember({
           type: 'image',
           title: '画像',
