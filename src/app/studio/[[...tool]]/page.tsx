@@ -12,6 +12,11 @@ import StudioClient from './StudioClient'
 
 export { metadata, viewport }
 
-export default function StudioPage() {
+export default async function StudioPage({
+  params,
+}: {
+  params: Promise<{ tool: string[] }>
+}) {
+  await params
   return <StudioClient />
 }
