@@ -8,6 +8,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import UpcomingEvents from '@/components/UpcomingEvents'
+import { ChevronUp } from 'lucide-react'
 
 type Article = {
   _id: string
@@ -46,10 +47,14 @@ type Event = {
   featured?: boolean
 }
 
+const ARTICLES_PER_PAGE = 6
+
 export default function HomeClient({ articles, events = [] }: { articles: Article[], events?: Event[] }) {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [gridKey, setGridKey] = useState(0)
   const [fading, setFading] = useState(false)
+  const [displayedCount, setDisplayedCount] = useState(ARTICLES_PER_PAGE)
+  const [showScrollTop, setShowScrollTop] = useState(false)
 
   const hasEvents = events.length > 0
   const mainArticle = articles.find(a => a.featured) || articles[0]
@@ -60,6 +65,33 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
       ? articles.filter(a => a._id !== mainArticle._id)
       : articles.filter(a => a.type === gridTab && a._id !== mainArticle._id)
   }, [gridTab, articles, mainArticle._id])
+
+  // 表示する記事を制限
+  const displayedArticles = useMemo(() => {
+    return filteredArticles.slice(0, displayedCount)
+  }, [filteredArticles, displayedCount])
+
+  const hasMoreArticles = displayedCount < filteredArticles.length
+
+  // スクロール時にトップボタンの表示/非表示を切り替え
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // ページトップへスクロール
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // もっと見るボタンをクリック
+  const handleLoadMore = () => {
+    setDisplayedCount(prev => prev + ARTICLES_PER_PAGE)
+  }
 
   const tabs = [
     { id: 'all', label: 'All' },
@@ -96,6 +128,7 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
   const handleTabChange = (tabId: string) => {
     if (tabId === activeTab) return
     setFading(true)
+    setDisplayedCount(ARTICLES_PER_PAGE)
     setTimeout(() => {
       setActiveTab(tabId)
       setGridKey(k => k + 1)
@@ -223,7 +256,7 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
             }`}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7 lg:gap-8">
-              {filteredArticles.map((article, index) => (
+              {displayedArticles.map((article, index) => (
                 <Reveal
                   key={`${gridKey}-${article._id}`}
                   className="reveal"
@@ -233,9 +266,39 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
                 </Reveal>
               ))}
             </div>
+
+            {/* もっと見るボタン */}
+            {hasMoreArticles && (
+              <div className="flex justify-center mt-10 sm:mt-12">
+                <button
+                  onClick={handleLoadMore}
+                  className="px-6 sm:px-8 py-2.5 sm:py-3 font-label text-[0.7rem] sm:text-[0.75rem] tracking-widest uppercase bg-orange-700 text-white hover:bg-orange-800 transition-colors duration-200 rounded-lg"
+                >
+                  More Articles
+                </button>
+              </div>
+            )}
+
+            {/* すべての記事を表示済みメッセージ */}
+            {!hasMoreArticles && displayedArticles.length > 0 && (
+              <div className="flex justify-center mt-10 sm:mt-12">
+                <p className="text-sm text-gray-500">すべての記事を表示しています</p>
+              </div>
+            )}
           </div>
         </section>
       </div>
+
+      {/* ページトップへ戻るボタン */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-orange-700 text-white shadow-lg hover:bg-orange-800 transition-all duration-200 hover:scale-110 active:scale-95"
+          aria-label="ページトップへ戻る"
+        >
+          <ChevronUp className="h-6 w-6" />
+        </button>
+      )}
 
       <Footer />
     </main>
