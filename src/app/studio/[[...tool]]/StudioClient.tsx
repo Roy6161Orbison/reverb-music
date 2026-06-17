@@ -13,11 +13,6 @@ export default function StudioClient() {
           animation: none !important;
           transition: none !important;
         }
-        /* Studio ページでグレイン入りベージュ背景を非表示にする */
-        .bg-gradient-motion,
-        .bg-grain {
-          display: none !important;
-        }
         body {
           background: #fff !important;
         }

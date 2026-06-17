@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site'
-import PageTransition from '@/components/PageTransition'
+import SiteChrome from '@/components/SiteChrome'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -46,9 +46,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className="antialiased">
-        <div className="bg-gradient-motion" aria-hidden="true" />
-        <div className="bg-grain" aria-hidden="true" />
-        <PageTransition />
+        <SiteChrome />
         {children}
       </body>
     </html>
