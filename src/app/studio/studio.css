@@ -1,0 +1,68 @@
+/**
+ * Studio-specific CSS optimizations
+ * 
+ * This stylesheet removes all heavy animations and visual effects
+ * from the main site's globals.css to ensure Sanity Studio runs smoothly.
+ * It provides a clean, minimal environment for content editing.
+ */
+
+/* Reset to minimal styling */
+:root {
+  --bg: #ffffff;
+  --text: #111111;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+/* Disable all animations and transitions for Studio */
+*,
+*::before,
+*::after {
+  animation: none !important;
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition: none !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
+
+/* Remove will-change hints */
+* {
+  will-change: auto !important;
+}
+
+/* Ensure no background animations */
+.bg-gradient-motion,
+.bg-grain,
+.page-transition {
+  display: none !important;
+}
+
+/* Remove any fixed positioning overlays */
+[class*="overlay"],
+[class*="backdrop"],
+[class*="modal"] {
+  animation: none !important;
+}
