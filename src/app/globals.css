@@ -256,11 +256,36 @@ input::placeholder { color: var(--text-muted); }
   position: relative;
   display: inline-flex;
   align-items: center;
+  gap: 1rem;
+  padding: 0;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  isolation: isolate;
+  transition:
+    background 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease,
+    backdrop-filter 0.45s ease,
+    -webkit-backdrop-filter 0.45s ease,
+    gap 0.45s ease,
+    padding 0.45s ease;
+}
+
+@media (min-width: 640px) {
+  .liquid-glass-tabs:not(.liquid-glass-tabs--activated) {
+    gap: 1.5rem;
+  }
+}
+
+.liquid-glass-tabs--activated {
   gap: 2px;
   padding: 4px;
-  border-radius: 9999px;
   background: rgba(255, 255, 255, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-color: rgba(255, 255, 255, 0.72);
   box-shadow:
     0 8px 32px rgba(31, 38, 135, 0.08),
     0 2px 8px rgba(0, 0, 0, 0.04),
@@ -268,7 +293,6 @@ input::placeholder { color: var(--text-muted); }
     inset 0 -1px 0 rgba(255, 255, 255, 0.28);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  isolation: isolate;
 }
 
 .liquid-glass-indicator {
@@ -306,6 +330,14 @@ input::placeholder { color: var(--text-muted); }
   opacity: 1;
 }
 
+.liquid-glass-indicator--initial {
+  transition:
+    opacity 0.4s ease,
+    width 0s,
+    height 0s,
+    transform 0s;
+}
+
 .liquid-glass-indicator__shine {
   position: absolute;
   inset: 1px 8px auto;
@@ -323,7 +355,7 @@ input::placeholder { color: var(--text-muted); }
   position: relative;
   z-index: 1;
   flex-shrink: 0;
-  padding: 0.55rem 0.95rem;
+  padding: 0.25rem 0;
   font-family: 'Inter', 'Noto Sans JP', sans-serif;
   font-size: 0.65rem;
   font-weight: 500;
@@ -337,14 +369,22 @@ input::placeholder { color: var(--text-muted); }
   white-space: nowrap;
   transition:
     color 0.3s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    padding 0.45s ease;
   -webkit-tap-highlight-color: transparent;
+}
+
+.liquid-glass-tabs--activated .liquid-glass-tab {
+  padding: 0.55rem 0.95rem;
 }
 
 @media (min-width: 640px) {
   .liquid-glass-tab {
-    padding: 0.6rem 1.1rem;
     font-size: 0.7rem;
+  }
+
+  .liquid-glass-tabs--activated .liquid-glass-tab {
+    padding: 0.6rem 1.1rem;
   }
 }
 
