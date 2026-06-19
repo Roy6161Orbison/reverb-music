@@ -86,13 +86,17 @@ export default function LiquidGlassTabs({
           </button>
         ))}
 
-        {/* Animated Gooey Indicator */}
+        {/* Animated Liquid Glass Indicator */}
         <div
-          className="absolute bottom-0 h-0.5 bg-orange-700 transition-all duration-300 ease-out"
+          className="absolute bottom-0 h-1 transition-all duration-300 ease-out"
           style={{
             left: indicatorStyle.left,
             width: indicatorStyle.width,
-            filter: 'drop-shadow(0 0 3px rgba(200, 80, 31, 0.4))',
+            background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.2) 100%)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '4px',
+            boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.5)',
           }}
         />
       </div>
