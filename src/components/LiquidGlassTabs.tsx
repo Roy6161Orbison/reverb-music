@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useEffect, useCallback, useState } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 
 interface Tab {
   id: string
@@ -13,141 +13,62 @@ interface LiquidGlassTabsProps {
   onTabChange: (tabId: string) => void
 }
 
-type IndicatorStyle = {
-  left: number
-  width: number
-  height: number
-  top: number
-}
-
 export default function LiquidGlassTabs({
   tabs,
   activeTab,
   onTabChange,
 }: LiquidGlassTabsProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
-  const [indicatorStyle, setIndicatorStyle] = useState<IndicatorStyle>({
-    left: 0,
-    width: 0,
-    height: 0,
-    top: 0,
+  const [indicatorStyle, setIndicatorStyle] = useState<{ left: string; width: string }>({
+    left: '0',
+    width: '0',
   })
-  const [indicatorReady, setIndicatorReady] = useState(false)
-  const [glassActivated, setGlassActivated] = useState(false)
-  const [indicatorVisible, setIndicatorVisible] = useState(false)
-  const [initialReveal, setInitialReveal] = useState(false)
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
 
   const updateIndicator = useCallback(() => {
-    const container = containerRef.current
     const activeTabElement = tabRefs.current[activeTab]
-    if (!container || !activeTabElement) return
-
-    const containerRect = container.getBoundingClientRect()
-    const tabRect = activeTabElement.getBoundingClientRect()
-
-    setIndicatorStyle({
-      left: tabRect.left - containerRect.left,
-      width: tabRect.width,
-      height: tabRect.height,
-      top: tabRect.top - containerRect.top,
-    })
-    setIndicatorReady(true)
+    if (activeTabElement) {
+      const { offsetLeft, offsetWidth } = activeTabElement
+      setIndicatorStyle({
+        left: `${offsetLeft}px`,
+        width: `${offsetWidth}px`,
+      })
+    }
   }, [activeTab])
 
   useEffect(() => {
     updateIndicator()
-  }, [updateIndicator, tabs])
-
-  useEffect(() => {
-    if (!glassActivated) return
-
-    const timer = window.setTimeout(() => {
-      updateIndicator()
-      setIndicatorVisible(true)
-      setInitialReveal(true)
-      window.setTimeout(() => setInitialReveal(false), 500)
-    }, 80)
-
-    return () => window.clearTimeout(timer)
-  }, [glassActivated, updateIndicator])
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const observer = new ResizeObserver(updateIndicator)
-    observer.observe(container)
-    window.addEventListener('resize', updateIndicator)
-
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('resize', updateIndicator)
-    }
   }, [updateIndicator])
 
-  const handleTabClick = (tabId: string) => {
-    if (!glassActivated) {
-      setGlassActivated(true)
-    }
-
-    if (tabId !== activeTab) {
-      onTabChange(tabId)
-    }
-  }
+  useEffect(() => {
+    window.addEventListener('resize', updateIndicator)
+    return () => window.removeEventListener('resize', updateIndicator)
+  }, [updateIndicator])
 
   return (
-    <div className="liquid-glass-tabs-scroll">
-      <div
-        className={`liquid-glass-wrapper ${glassActivated ? 'liquid-glass-wrapper--activated' : ''}`}
-      >
-        {glassActivated && (
-          <div className="liquid-bg" aria-hidden>
-            <div className="blob color1" />
-            <div className="blob color2" />
-            <div className="blob color3" />
-          </div>
-        )}
-
-        <div
-          ref={containerRef}
-          className={`liquid-glass-tabs ${glassActivated ? 'liquid-glass-tabs--activated' : ''}`}
+    <div className="relative flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2.5 sm:gap-y-3 pb-2">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          ref={(el) => {
+            if (el) tabRefs.current[tab.id] = el
+          }}
+          onClick={() => onTabChange(tab.id)}
+          className={`font-label text-[0.65rem] sm:text-[0.7rem] tracking-widest uppercase transition-colors duration-200 relative z-10 ${
+            activeTab === tab.id ? 'text-black font-bold' : 'text-gray-500 hover:text-gray-700'
+          }`}
         >
-          {glassActivated && indicatorVisible && (
-            <div
-              className={[
-                'liquid-glass-indicator',
-                indicatorReady ? 'liquid-glass-indicator--ready' : '',
-                initialReveal ? 'liquid-glass-indicator--initial' : '',
-              ].filter(Boolean).join(' ')}
-              style={{
-                transform: `translate3d(${indicatorStyle.left}px, ${indicatorStyle.top}px, 0)`,
-                width: indicatorStyle.width,
-                height: indicatorStyle.height,
-              }}
-              aria-hidden
-            >
-              <span className="liquid-glass-indicator__shine" />
-            </div>
-          )}
+          {tab.label}
+        </button>
+      ))}
 
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              ref={(el) => {
-                tabRefs.current[tab.id] = el
-              }}
-              type="button"
-              onClick={() => handleTabClick(tab.id)}
-              className={`liquid-glass-tab ${
-                activeTab === tab.id ? 'liquid-glass-tab--active' : ''
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Animated Underline Indicator */}
+      <div
+        className="absolute bottom-0 h-0.5 bg-orange-700 transition-all duration-300 ease-out"
+        style={{
+          left: indicatorStyle.left,
+          width: indicatorStyle.width,
+        }}
+      />
     </div>
   )
 }
