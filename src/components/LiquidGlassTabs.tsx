@@ -99,42 +99,54 @@ export default function LiquidGlassTabs({
   return (
     <div className="liquid-glass-tabs-scroll">
       <div
-        ref={containerRef}
-        className={`liquid-glass-tabs ${glassActivated ? 'liquid-glass-tabs--activated' : ''}`}
+        className={`liquid-glass-wrapper ${glassActivated ? 'liquid-glass-wrapper--activated' : ''}`}
       >
-        {glassActivated && indicatorVisible && (
-          <div
-            className={[
-              'liquid-glass-indicator',
-              indicatorReady ? 'liquid-glass-indicator--ready' : '',
-              initialReveal ? 'liquid-glass-indicator--initial' : '',
-            ].filter(Boolean).join(' ')}
-            style={{
-              transform: `translate3d(${indicatorStyle.left}px, ${indicatorStyle.top}px, 0)`,
-              width: indicatorStyle.width,
-              height: indicatorStyle.height,
-            }}
-            aria-hidden
-          >
-            <span className="liquid-glass-indicator__shine" />
+        {glassActivated && (
+          <div className="liquid-bg" aria-hidden>
+            <div className="blob color1" />
+            <div className="blob color2" />
+            <div className="blob color3" />
           </div>
         )}
 
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            ref={(el) => {
-              tabRefs.current[tab.id] = el
-            }}
-            type="button"
-            onClick={() => handleTabClick(tab.id)}
-            className={`liquid-glass-tab ${
-              activeTab === tab.id ? 'liquid-glass-tab--active' : ''
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+        <div
+          ref={containerRef}
+          className={`liquid-glass-tabs ${glassActivated ? 'liquid-glass-tabs--activated' : ''}`}
+        >
+          {glassActivated && indicatorVisible && (
+            <div
+              className={[
+                'liquid-glass-indicator',
+                indicatorReady ? 'liquid-glass-indicator--ready' : '',
+                initialReveal ? 'liquid-glass-indicator--initial' : '',
+              ].filter(Boolean).join(' ')}
+              style={{
+                transform: `translate3d(${indicatorStyle.left}px, ${indicatorStyle.top}px, 0)`,
+                width: indicatorStyle.width,
+                height: indicatorStyle.height,
+              }}
+              aria-hidden
+            >
+              <span className="liquid-glass-indicator__shine" />
+            </div>
+          )}
+
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              ref={(el) => {
+                tabRefs.current[tab.id] = el
+              }}
+              type="button"
+              onClick={() => handleTabClick(tab.id)}
+              className={`liquid-glass-tab ${
+                activeTab === tab.id ? 'liquid-glass-tab--active' : ''
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   )
