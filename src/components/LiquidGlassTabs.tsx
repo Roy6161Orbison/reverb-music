@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useRef, useEffect, useCallback, useState } from 'react'
 
 interface Tab {
   id: string
@@ -13,93 +13,94 @@ interface LiquidGlassTabsProps {
   onTabChange: (tabId: string) => void
 }
 
+type IndicatorStyle = {
+  left: number
+  width: number
+  height: number
+  top: number
+}
+
 export default function LiquidGlassTabs({
   tabs,
   activeTab,
   onTabChange,
 }: LiquidGlassTabsProps) {
-  const [indicatorStyle, setIndicatorStyle] = useState<{ left: string; width: string }>({
-    left: '0',
-    width: '0',
-  })
+  const containerRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const [indicatorStyle, setIndicatorStyle] = useState<IndicatorStyle>({
+    left: 0,
+    width: 0,
+    height: 0,
+    top: 0,
+  })
+  const [ready, setReady] = useState(false)
 
   const updateIndicator = useCallback(() => {
+    const container = containerRef.current
     const activeTabElement = tabRefs.current[activeTab]
-    if (activeTabElement) {
-      const { offsetLeft, offsetWidth } = activeTabElement
-      setIndicatorStyle({
-        left: `${offsetLeft}px`,
-        width: `${offsetWidth}px`,
-      })
-    }
+    if (!container || !activeTabElement) return
+
+    const containerRect = container.getBoundingClientRect()
+    const tabRect = activeTabElement.getBoundingClientRect()
+
+    setIndicatorStyle({
+      left: tabRect.left - containerRect.left,
+      width: tabRect.width,
+      height: tabRect.height,
+      top: tabRect.top - containerRect.top,
+    })
+    setReady(true)
   }, [activeTab])
 
   useEffect(() => {
     updateIndicator()
-  }, [updateIndicator])
+  }, [updateIndicator, tabs])
 
   useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const observer = new ResizeObserver(updateIndicator)
+    observer.observe(container)
     window.addEventListener('resize', updateIndicator)
-    return () => window.removeEventListener('resize', updateIndicator)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', updateIndicator)
+    }
   }, [updateIndicator])
 
   return (
-    <>
-      {/* SVG Gooey Filter */}
-      <svg
-        className="absolute w-0 h-0"
-        xmlns="http://www.w3.org/2000/svg"
-        version="1.1"
-      >
-        <defs>
-          <filter id="gooey-reverb">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-            <feColorMatrix
-              in="blur"
-              type="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
-              result="goo"
-            />
-            <feBlend in="SourceGraphic" in2="goo" />
-          </filter>
-        </defs>
-      </svg>
+    <div className="liquid-glass-tabs-scroll">
+      <div ref={containerRef} className="liquid-glass-tabs">
+        <div
+          className={`liquid-glass-indicator ${ready ? 'liquid-glass-indicator--ready' : ''}`}
+          style={{
+            transform: `translate3d(${indicatorStyle.left}px, ${indicatorStyle.top}px, 0)`,
+            width: indicatorStyle.width,
+            height: indicatorStyle.height,
+          }}
+          aria-hidden
+        >
+          <span className="liquid-glass-indicator__shine" />
+        </div>
 
-      {/* Tab Container with Gooey Filter */}
-      <div
-        className="relative flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2.5 sm:gap-y-3 pb-2"
-        style={{ filter: 'url(#gooey-reverb)' }}
-      >
         {tabs.map((tab) => (
           <button
             key={tab.id}
             ref={(el) => {
-              if (el) tabRefs.current[tab.id] = el
+              tabRefs.current[tab.id] = el
             }}
+            type="button"
             onClick={() => onTabChange(tab.id)}
-            className={`font-label text-[0.65rem] sm:text-[0.7rem] tracking-widest uppercase transition-colors duration-200 relative z-10 ${
-              activeTab === tab.id ? 'text-black font-bold' : 'text-gray-500 hover:text-gray-700'
+            className={`liquid-glass-tab ${
+              activeTab === tab.id ? 'liquid-glass-tab--active' : ''
             }`}
           >
             {tab.label}
           </button>
         ))}
-
-        {/* Animated Liquid Glass Indicator */}
-        <div
-          className="absolute bottom-0 h-1 transition-all duration-300 ease-out"
-          style={{
-            left: indicatorStyle.left,
-            width: indicatorStyle.width,
-            background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.2) 100%)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            borderRadius: '4px',
-            boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.5)',
-          }}
-        />
       </div>
-    </>
+    </div>
   )
 }

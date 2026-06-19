@@ -241,6 +241,138 @@ input::placeholder { color: var(--text-muted); }
   pointer-events: none;
 }
 
+/* === iPhone-style Liquid Glass tabs === */
+.liquid-glass-tabs-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 2px 0;
+}
+.liquid-glass-tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.liquid-glass-tabs {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 8px 32px rgba(31, 38, 135, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  isolation: isolate;
+}
+
+.liquid-glass-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.96) 0%,
+      rgba(255, 255, 255, 0.72) 48%,
+      rgba(255, 255, 255, 0.58) 100%
+    );
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(255, 255, 255, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  transition:
+    transform 0.55s cubic-bezier(0.34, 1.25, 0.64, 1),
+    width 0.55s cubic-bezier(0.34, 1.25, 0.64, 1),
+    height 0.55s cubic-bezier(0.34, 1.25, 0.64, 1),
+    opacity 0.25s ease;
+  will-change: transform, width, height;
+}
+
+.liquid-glass-indicator--ready {
+  opacity: 1;
+}
+
+.liquid-glass-indicator__shine {
+  position: absolute;
+  inset: 1px 8px auto;
+  height: 42%;
+  border-radius: 9999px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.liquid-glass-tab {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  padding: 0.55rem 0.95rem;
+  font-family: 'Inter', 'Noto Sans JP', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.48);
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color 0.3s ease,
+    transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 640px) {
+  .liquid-glass-tab {
+    padding: 0.6rem 1.1rem;
+    font-size: 0.7rem;
+  }
+}
+
+.liquid-glass-tab:hover {
+  color: rgba(17, 17, 17, 0.72);
+}
+
+.liquid-glass-tab:active {
+  transform: scale(0.97);
+}
+
+.liquid-glass-tab--active {
+  color: rgba(17, 17, 17, 0.92);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-glass-indicator {
+    transition: none;
+  }
+  .liquid-glass-tab {
+    transition: color 0.2s ease;
+  }
+  .liquid-glass-tab:active {
+    transform: none;
+  }
+}
+
 /* === Marquee (subtle brand ticker) === */
 @keyframes marquee {
   from { transform: translateX(0); }

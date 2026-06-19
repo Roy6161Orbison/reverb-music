@@ -182,7 +182,7 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
         )}
 
         {/* タブ行 - Liquid Glass */}
-        <div className="py-5 sm:py-7 border-b border-gray-200">
+        <div className="py-5 sm:py-7 border-b border-gray-200/70">
           <LiquidGlassTabs
             tabs={[
               ...tabs,
