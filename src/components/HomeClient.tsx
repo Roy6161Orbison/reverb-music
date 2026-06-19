@@ -8,6 +8,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Reveal from '@/components/Reveal'
 import UpcomingEvents from '@/components/UpcomingEvents'
+import LiquidGlassTabs from '@/components/LiquidGlassTabs'
 import { ChevronUp } from 'lucide-react'
 
 type Article = {
@@ -102,28 +103,7 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
     { id: 'interview', label: 'Interviews' },
   ]
 
-  // --- Sliding tab indicator ---
-  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
-  const [indicator, setIndicator] = useState({ left: 0, top: 0, width: 0 })
 
-  const updateIndicator = useCallback(() => {
-    const btn = tabRefs.current[activeTab]
-    if (!btn) return
-    setIndicator({
-      left: btn.offsetLeft,
-      top: btn.offsetTop + btn.offsetHeight,
-      width: btn.offsetWidth,
-    })
-  }, [activeTab])
-
-  useEffect(() => {
-    updateIndicator()
-  }, [updateIndicator])
-
-  useEffect(() => {
-    window.addEventListener('resize', updateIndicator)
-    return () => window.removeEventListener('resize', updateIndicator)
-  }, [updateIndicator])
 
   const handleTabChange = (tabId: string) => {
     if (tabId === activeTab) return
@@ -201,44 +181,16 @@ export default function HomeClient({ articles, events = [] }: { articles: Articl
           </section>
         )}
 
-        {/* タブ行 */}
+        {/* タブ行 - Liquid Glass */}
         <div className="py-5 sm:py-7 border-b border-gray-200">
-          <div className="relative flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2.5 sm:gap-y-3 pb-2">
-            {tabs.map(tab => (
-              <button
-                key={tab.id}
-                ref={(el) => { tabRefs.current[tab.id] = el }}
-                onClick={() => handleTabChange(tab.id)}
-                className={`font-label text-[0.65rem] sm:text-[0.7rem] tracking-widest uppercase transition-colors duration-200 ${
-                  activeTab === tab.id
-                    ? 'text-black font-bold'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-
-            {/* スマホ版: Interviewsの右に Upcoming Events */}
-            {hasEvents && (
-              <button
-                ref={(el) => { tabRefs.current['events'] = el }}
-                onClick={() => handleTabChange('events')}
-                className={`lg:hidden font-label text-[0.65rem] sm:text-[0.7rem] tracking-widest uppercase transition-colors duration-200 ${
-                  activeTab === 'events'
-                    ? 'text-orange-700 font-bold'
-                    : 'text-orange-700/70 hover:text-orange-700'
-                }`}
-              >
-                Events
-              </button>
-            )}
-
-            <span
-              className="tab-indicator"
-              style={{ left: indicator.left, top: indicator.top, width: indicator.width }}
-            />
-          </div>
+          <LiquidGlassTabs
+            tabs={[
+              ...tabs,
+              ...(hasEvents ? [{ id: 'events', label: 'Events' }] : []),
+            ]}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+          />
         </div>
 
         <section className="py-7 sm:py-10 md:py-12">
