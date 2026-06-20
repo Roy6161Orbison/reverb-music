@@ -23,13 +23,21 @@ export default function LiquidGlassTabs({
     width: '0',
   })
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const updateIndicator = useCallback(() => {
     const activeTabElement = tabRefs.current[activeTab]
-    if (activeTabElement) {
+    const container = containerRef.current
+    if (activeTabElement && container) {
       const { offsetLeft, offsetWidth } = activeTabElement
+      const containerRect = container.getBoundingClientRect()
+      const tabRect = activeTabElement.getBoundingClientRect()
+      
+      // コンテナ内での相対位置を計算
+      const relativeLeft = tabRect.left - containerRect.left
+      
       setIndicatorStyle({
-        left: `${offsetLeft}px`,
+        left: `${relativeLeft}px`,
         width: `${offsetWidth}px`,
       })
     }
@@ -45,7 +53,10 @@ export default function LiquidGlassTabs({
   }, [updateIndicator])
 
   return (
-    <div className="relative flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2.5 sm:gap-y-3 pb-2">
+    <div 
+      ref={containerRef}
+      className="relative flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2.5 sm:gap-y-3 pb-2"
+    >
       {tabs.map((tab) => (
         <button
           key={tab.id}
@@ -53,22 +64,17 @@ export default function LiquidGlassTabs({
             if (el) tabRefs.current[tab.id] = el
           }}
           onClick={() => onTabChange(tab.id)}
-          className={`font-label text-[0.65rem] sm:text-[0.7rem] tracking-widest uppercase transition-colors duration-200 relative z-10 ${
+          className={`font-label text-[0.65rem] sm:text-[0.7rem] tracking-widest uppercase transition-colors duration-200 relative z-10 pb-1 ${
             activeTab === tab.id ? 'text-black font-bold' : 'text-gray-500 hover:text-gray-700'
           }`}
         >
           {tab.label}
+          {/* 各タブの下に個別のアンダーライン */}
+          {activeTab === tab.id && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-700 transition-all duration-300 ease-out" />
+          )}
         </button>
       ))}
-
-      {/* Animated Underline Indicator */}
-      <div
-        className="absolute bottom-0 h-0.5 bg-orange-700 transition-all duration-300 ease-out"
-        style={{
-          left: indicatorStyle.left,
-          width: indicatorStyle.width,
-        }}
-      />
     </div>
   )
 }
